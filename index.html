@@ -1,0 +1,2455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EXAMORA – Student Examination & Learning Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #0f172a;
+      --indigo: #4f46e5;
+      --blue: #2563eb;
+      --violet: #7c3aed;
+      --pink: #ec4899;
+      --cyan: #06b6d4;
+      --emerald: #10b981;
+      --amber: #f59e0b;
+      --rose: #ef4444;
+      --bg: #f4f6fb;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --radius: 16px;
+      --radius-lg: 24px;
+      --shadow: 0 12px 30px -8px rgba(15, 23, 42, 0.08), 0 4px 12px -4px rgba(79, 70, 229, 0.05);
+      --glow: 0 10px 25px -5px rgba(79, 70, 229, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    .hidden { display: none !important; }
+    .container { max-width: 1280px; margin: 0 auto; padding: 0 20px; }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 11px 18px; border-radius: 12px; font-weight: 700; font-size: 13.5px;
+      cursor: pointer; border: none; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      text-decoration: none;
+    }
+    .btn:active:not(:disabled) { transform: scale(0.97); }
+    .btn:disabled { opacity: 0.55; cursor: not-allowed; }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--blue) 0%, var(--indigo) 50%, var(--violet) 100%);
+      color: #fff; box-shadow: var(--glow);
+    }
+    .btn-primary:hover:not(:disabled) { transform: translateY(-2px); filter: brightness(1.06); }
+    .btn-accent { background: linear-gradient(135deg, var(--violet), var(--pink)); color: #fff; box-shadow: 0 8px 20px -5px rgba(124, 58, 237, 0.4); }
+    .btn-success { background: linear-gradient(135deg, #059669, var(--emerald)); color: #fff; box-shadow: 0 8px 20px -5px rgba(16, 185, 129, 0.4); }
+    .btn-warning { background: linear-gradient(135deg, #d97706, var(--amber)); color: #fff; }
+    .btn-danger { background: linear-gradient(135deg, #dc2626, var(--rose)); color: #fff; }
+    .btn-outline { background: #fff; border: 1.5px solid var(--border); color: var(--text); }
+    .btn-outline:hover:not(:disabled) { background: #f8fafc; border-color: var(--indigo); color: var(--indigo); }
+
+    /* Status Badges */
+    .badge {
+      padding: 5px 12px; border-radius: 999px; font-size: 11px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.05em; display: inline-flex; align-items: center; gap: 5px;
+    }
+    .badge-upcoming, .badge-scheduled, .badge-open { background: #eef2ff; color: #4338ca; border: 1px solid #c7d2fe; }
+    .badge-available, .badge-live, .badge-approved, .badge-resolved { background: #ecfdf5; color: #047857; border: 1px solid #6ee7b7; }
+    .badge-completed, .badge-closed { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+    .badge-cancelled, .badge-fail, .badge-rejected, .badge-suspended { background: #fef2f2; color: #b91c1c; border: 1px solid #fca5a5; }
+    .badge-pending, .badge-in_progress { background: #fffbeb; color: #b45309; border: 1px solid #fcd34d; }
+
+    /* Cards */
+    .card {
+      background: var(--card); border-radius: var(--radius); padding: 22px;
+      box-shadow: var(--shadow); border: 1px solid rgba(226, 232, 240, 0.9);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    /* Vibrant Colorful Login Screen */
+    .auth-wrapper {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 45%, #311042 100%);
+      position: relative; overflow: hidden; padding: 20px;
+    }
+    .auth-orb-1 {
+      position: absolute; width: 380px; height: 380px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.45), transparent 70%);
+      top: -80px; left: -80px; pointer-events: none;
+    }
+    .auth-orb-2 {
+      position: absolute; width: 420px; height: 420px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(236, 72, 153, 0.35), transparent 70%);
+      bottom: -100px; right: -80px; pointer-events: none;
+    }
+    .auth-card {
+      width: 100%; max-width: 450px; background: rgba(255, 255, 255, 0.97);
+      backdrop-filter: blur(20px); border-radius: var(--radius-lg); padding: 38px 30px;
+      text-align: center; position: relative; z-index: 2;
+      box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.55);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+    .logo-emblem {
+      width: 64px; height: 64px; margin: 0 auto 14px; border-radius: 18px;
+      background: linear-gradient(135deg, #2563eb, #7c3aed, #ec4899);
+      display: grid; place-items: center; color: #fff; font-size: 30px; font-weight: 800;
+      box-shadow: 0 14px 28px -6px rgba(124, 58, 237, 0.5);
+    }
+    .feature-pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 16px 0 24px; }
+    .pill {
+      background: linear-gradient(135deg, #eef2ff, #faf5ff); color: #4338ca;
+      font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 999px;
+      border: 1px solid #ddd6fe;
+    }
+    .google-btn {
+      width: 100%; padding: 14px 20px; border-radius: 14px; font-size: 15px; font-weight: 700;
+      background: #ffffff; color: #0f172a; border: 2px solid #e2e8f0;
+      display: flex; align-items: center; justify-content: center; gap: 12px;
+      cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+    }
+    .google-btn:hover:not(:disabled) { border-color: var(--indigo); transform: translateY(-2px); box-shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.2); }
+    .redirect-alt-btn {
+      margin-top: 10px; background: transparent; border: none; color: var(--indigo);
+      font-size: 12.5px; font-weight: 700; cursor: pointer; text-decoration: underline;
+      padding: 5px 10px; border-radius: 8px;
+    }
+    .redirect-alt-btn.highlight { background: #eef2ff; border: 1px solid #c7d2fe; text-decoration: none; }
+    .divider-line {
+      display: flex; align-items: center; gap: 12px; margin: 18px 0;
+      color: var(--muted); font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+    }
+    .divider-line::before, .divider-line::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+
+    /* Topbar & Colorful Sidebar */
+    .topbar {
+      background: linear-gradient(90deg, #0f172a 0%, #1e1b4b 100%);
+      color: #fff; padding: 13px 24px; display: flex; align-items: center;
+      justify-content: space-between; position: sticky; top: 0; z-index: 100;
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.15);
+    }
+    .brand { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 800; color: #fff; cursor: pointer; }
+    .brand-logo {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899);
+      display: grid; place-items: center; font-size: 17px; font-weight: 800; color: #fff;
+    }
+    .brand span { background: linear-gradient(90deg, #93c5fd, #f472b6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+    .app-layout { display: flex; min-height: calc(100vh - 62px); }
+    .sidebar {
+      width: 265px; background: #ffffff; padding: 20px 14px;
+      display: flex; flex-direction: column; gap: 5px;
+      border-right: 1px solid var(--border); transition: transform 0.3s ease;
+    }
+    .sidebar button {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 11px 14px; color: #475569; border-radius: 12px; font-size: 13.5px;
+      font-weight: 600; background: transparent; border: none; width: 100%; text-align: left; cursor: pointer;
+      transition: all 0.15s;
+    }
+    .sidebar button:hover { background: #f1f5f9; color: var(--indigo); }
+    .sidebar button.active {
+      background: linear-gradient(135deg, #eef2ff 0%, #f5f3ff 100%);
+      color: var(--indigo); font-weight: 700; box-shadow: inset 3px 0 0 var(--indigo);
+    }
+    .nav-badge {
+      background: var(--rose); color: #fff; font-size: 11px; font-weight: 800;
+      padding: 2px 8px; border-radius: 999px;
+    }
+
+    .main-content { flex: 1; padding: 26px; width: 100%; max-width: 1440px; margin: 0 auto; padding-bottom: 90px; }
+
+    /* Mobile Bottom Navigation */
+    .mobile-bottom-nav {
+      display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 95;
+      background: #ffffff; border-top: 1px solid var(--border);
+      padding: 8px 6px; justify-content: space-around;
+      box-shadow: 0 -4px 20px rgba(15, 23, 42, 0.08);
+    }
+    .mobile-bottom-nav button {
+      background: transparent; border: none; display: flex; flex-direction: column;
+      align-items: center; gap: 3px; font-size: 11px; font-weight: 700; color: var(--muted);
+      cursor: pointer; padding: 4px 10px; border-radius: 10px;
+    }
+    .mobile-bottom-nav button.active { color: var(--indigo); background: #eef2ff; }
+
+    @media (max-width: 1023px) {
+      .sidebar { position: fixed; top: 62px; left: 0; bottom: 0; z-index: 99; transform: translateX(-100%); box-shadow: 20px 0 40px rgba(0,0,0,0.15); }
+      .sidebar.open { transform: translateX(0); }
+      .mobile-bottom-nav { display: flex; }
+      .main-content { padding: 18px 14px 90px; }
+    }
+    @media (min-width: 1024px) {
+      .mobile-menu-btn { display: none; }
+    }
+
+    /* Colorful Gradient Stat Cards */
+    .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 24px; }
+    @media (min-width: 1024px) { .stats-grid { grid-template-columns: repeat(5, 1fr); } }
+
+    .stat-card {
+      border-radius: var(--radius); padding: 20px; color: #fff; position: relative; overflow: hidden;
+      box-shadow: 0 12px 24px -8px rgba(15, 23, 42, 0.2);
+    }
+    .stat-blue { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
+    .stat-emerald { background: linear-gradient(135deg, #059669, #10b981); }
+    .stat-violet { background: linear-gradient(135deg, #7c3aed, #6d28d9); }
+    .stat-amber { background: linear-gradient(135deg, #ea580c, #f59e0b); }
+    .stat-pink { background: linear-gradient(135deg, #db2777, #ec4899); }
+
+    /* Quick Actions Grid */
+    .quick-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 26px; }
+    @media (min-width: 768px) { .quick-grid { grid-template-columns: repeat(4, 1fr); } }
+    @media (min-width: 1100px) { .quick-grid { grid-template-columns: repeat(8, 1fr); } }
+
+    .quick-tile {
+      background: #fff; border: 1.5px solid var(--border); border-radius: 14px;
+      padding: 14px 10px; text-align: center; cursor: pointer; transition: all 0.2s;
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+    }
+    .quick-tile:hover { border-color: var(--indigo); transform: translateY(-3px); box-shadow: var(--shadow); }
+    .quick-icon {
+      width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center;
+      font-size: 18px; background: linear-gradient(135deg, #eef2ff, #f5f3ff);
+    }
+    .quick-tile span { font-size: 12px; font-weight: 700; color: var(--text); }
+
+    /* Grids */
+    .cards-grid { display: grid; grid-template-columns: 1fr; gap: 18px; }
+    @media (min-width: 768px) { .cards-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 1100px) { .cards-grid { grid-template-columns: repeat(3, 1fr); } }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 600px) { .two-col { grid-template-columns: 1fr; } }
+
+    /* Forms */
+    .form-group { margin-bottom: 14px; text-align: left; }
+    .form-group label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 6px; color: #334155; }
+    .form-control {
+      width: 100%; padding: 11px 14px; border: 1.5px solid var(--border);
+      border-radius: 12px; font-size: 14px; background: #fff; transition: 0.2s;
+    }
+    .form-control:focus { outline: none; border-color: var(--indigo); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.14); }
+    .form-control:disabled { background: #f8fafc; color: var(--muted); }
+
+    /* Tables */
+    .table-responsive { width: 100%; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+    th, td { padding: 14px 16px; border-bottom: 1px solid var(--border); font-size: 13.5px; }
+    th { background: #f8fafc; font-weight: 700; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+
+    /* 5-Color Exam Palette & Interface */
+    .exam-layout { display: grid; grid-template-columns: 1fr; gap: 22px; }
+    @media (min-width: 992px) { .exam-layout { grid-template-columns: 1fr 330px; } }
+    .option-item {
+      display: flex; align-items: center; gap: 14px; padding: 15px 18px;
+      border: 2px solid var(--border); border-radius: 14px; margin-bottom: 12px;
+      cursor: pointer; transition: all 0.15s; background: #fff;
+    }
+    .option-item:hover { border-color: var(--indigo); background: #f8fafc; }
+    .option-item.selected { border-color: var(--indigo); background: #eef2ff; font-weight: 700; }
+
+    .palette-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 14px; }
+    .palette-btn {
+      padding: 10px 0; border-radius: 10px; border: 1.5px solid var(--border);
+      font-weight: 800; font-size: 13px; cursor: pointer; transition: 0.15s;
+    }
+    /* 5 Required Palette States */
+    .p-not-visited { background: #ffffff; color: #475569; }
+    .p-not-answered { background: #fee2e2; color: #b91c1c; border-color: #fca5a5; }
+    .p-answered { background: #10b981; color: #ffffff; border-color: #059669; }
+    .p-review { background: #7c3aed; color: #ffffff; border-color: #6d28d9; }
+    .p-ans-review { background: linear-gradient(135deg, #7c3aed 60%, #10b981 60%); color: #ffffff; border-color: #6d28d9; }
+    .palette-btn.current { outline: 3px solid #0f172a; outline-offset: 1px; }
+
+    /* AI Chat & Ticket Chat */
+    .chat-box {
+      height: 330px; overflow-y: auto; padding: 16px; background: #f8fafc;
+      border-radius: 14px; border: 1px solid var(--border); display: flex; flex-direction: column; gap: 12px;
+    }
+    .msg-bubble { max-width: 82%; padding: 11px 15px; border-radius: 14px; font-size: 13.5px; line-height: 1.5; }
+    .msg-user { align-self: flex-end; background: linear-gradient(135deg, var(--blue), var(--indigo)); color: #fff; border-bottom-right-radius: 4px; }
+    .msg-bot { align-self: flex-start; background: #fff; color: var(--text); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center; z-index: 200; padding: 16px;
+    }
+    .modal-card {
+      background: #fff; border-radius: var(--radius-lg); max-width: 540px; width: 100%;
+      padding: 28px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+    }
+
+    /* Alert Banner */
+    .alert { padding: 14px 16px; border-radius: 12px; margin-bottom: 18px; font-size: 13.5px; font-weight: 600; }
+    .alert-warning { background: #fffbeb; color: #92400e; border: 1px solid #fcd34d; }
+    .alert-info { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
+    .alert-danger { background: #fef2f2; color: #991b1b; border: 1px solid #fca5a5; }
+    .alert-success { background: #ecfdf5; color: #065f46; border: 1px solid #6ee7b7; }
+  </style>
+</head>
+<body>
+
+  <!-- ==================== PART 1: COLORFUL STUDENT LOGIN ==================== -->
+  <div id="view-login" class="auth-wrapper">
+    <div class="auth-orb-1"></div>
+    <div class="auth-orb-2"></div>
+    <div class="auth-card">
+      <div class="logo-emblem">E</div>
+      <h1 style="font-size: 28px; font-weight: 800; letter-spacing: -0.02em;">
+        EXAM<span style="color: var(--indigo);">ORA</span>
+      </h1>
+      <p style="color: var(--muted); font-size: 14px; margin-top: 4px;">Smart Student Examination & Learning Portal</p>
+
+      <div class="feature-pills">
+        <span class="pill">⚡ Live Exams</span>
+        <span class="pill">📊 Analytics</span>
+        <span class="pill">🏆 Leaderboard</span>
+        <span class="pill">🤖 AI Support</span>
+      </div>
+
+      <button type="button" id="googleLoginBtn" class="google-btn">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20" alt="Google" />
+        <span id="googleBtnText">Continue with Google</span>
+      </button>
+
+      <div>
+        <button type="button" id="googleRedirectBtn" class="redirect-alt-btn">
+          Popup blocked? Sign in via Redirect
+        </button>
+      </div>
+
+      <div class="divider-line">Or Student Email Login</div>
+
+      <form id="emailLoginForm">
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="loginEmail" class="form-control" placeholder="student@example.com" required />
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" required />
+        </div>
+        <button type="submit" id="emailLoginBtn" class="btn btn-primary" style="width: 100%; padding: 13px;">
+          Sign In to Portal
+        </button>
+      </form>
+
+      <p style="margin-top: 16px; font-size: 13px; color: var(--muted);">
+        New Student? <a href="#" id="openRegisterLink" style="color: var(--indigo); font-weight: 700; text-decoration: none;">Create Student Account</a>
+      </p>
+      <p id="loginStatus" style="margin-top: 12px; font-size: 13px; color: var(--muted); min-height: 20px;"></p>
+    </div>
+  </div>
+
+  <!-- ==================== PART 1.2: STUDENT REGISTRATION ==================== -->
+  <div id="view-register" class="hidden">
+    <header class="topbar">
+      <div class="brand"><div class="brand-logo">E</div> EXAM<span>ORA</span></div>
+      <button id="backToLoginBtn" class="btn btn-outline" style="background:transparent; color:#fff; border-color:rgba(255,255,255,0.25);">Back to Login</button>
+    </header>
+    <main class="container" style="max-width: 680px; padding: 32px 16px;">
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+          <div>
+            <h2 style="font-size:22px;">Student Registration</h2>
+            <p style="color:var(--muted); font-size:13px;">Fill your academic details for Admin verification</p>
+          </div>
+          <span class="badge badge-pending">Pending Approval</span>
+        </div>
+
+        <div id="regErrorBox" class="alert alert-danger hidden"></div>
+
+        <form id="regForm">
+          <div class="two-col">
+            <div class="form-group">
+              <label>Full Name *</label>
+              <input type="text" id="regFullName" class="form-control" required />
+            </div>
+            <div class="form-group">
+              <label>Student Mobile Number *</label>
+              <input type="tel" id="regMobile" class="form-control" placeholder="e.g. 9876543210" required />
+            </div>
+          </div>
+
+          <div class="two-col">
+            <div class="form-group">
+              <label>Father's Name *</label>
+              <input type="text" id="regFatherName" class="form-control" required />
+            </div>
+            <div class="form-group">
+              <label>Date of Birth (Optional)</label>
+              <input type="date" id="regDob" class="form-control" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>School Name *</label>
+            <select id="regSchoolId" class="form-control" required>
+              <option value="">Loading schools...</option>
+            </select>
+          </div>
+
+          <div class="two-col">
+            <div class="form-group">
+              <label>Class *</label>
+              <input type="text" id="regClassName" class="form-control" placeholder="e.g. Class 1 or Class 10" required />
+            </div>
+            <div class="form-group">
+              <label>Section (Optional)</label>
+              <input type="text" id="regSection" class="form-control" placeholder="e.g. A" />
+            </div>
+          </div>
+
+          <div class="two-col">
+            <div class="form-group">
+              <label>Roll Number (Optional)</label>
+              <input type="text" id="regRollNumber" class="form-control" placeholder="e.g. 101" />
+            </div>
+            <div class="form-group">
+              <label>Profile Photo URL (Optional)</label>
+              <input type="url" id="regPhotoUrl" class="form-control" placeholder="Auto-filled from Google" />
+            </div>
+          </div>
+
+          <div class="two-col">
+            <div class="form-group">
+              <label>Email *</label>
+              <input type="email" id="regEmail" class="form-control" required />
+            </div>
+            <div class="form-group" id="regPasswordGroup">
+              <label>Create Password *</label>
+              <input type="password" id="regPassword" class="form-control" minlength="6" placeholder="Min 6 characters" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Student UID (Automatic)</label>
+            <input type="text" id="regUid" class="form-control" disabled />
+          </div>
+
+          <button type="submit" id="regSubmitBtn" class="btn btn-primary" style="width:100%; padding:14px; margin-top:8px;">
+            Complete Registration
+          </button>
+        </form>
+      </div>
+    </main>
+  </div>
+
+  <!-- ==================== COMPLETE STUDENT PORTAL ==================== -->
+  <div id="view-portal" class="hidden">
+    <header class="topbar">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <button id="menuToggle" class="btn btn-outline mobile-menu-btn" style="background:transparent; color:#fff; border-color:rgba(255,255,255,0.25); padding:6px 10px;">☰</button>
+        <div class="brand" onclick="switchTab('sec-dashboard')"><div class="brand-logo">E</div> EXAM<span>ORA</span></div>
+      </div>
+
+      <div style="display:flex; align-items:center; gap:14px;">
+        <button onclick="switchTab('sec-notifications')" style="background:rgba(255,255,255,0.1); border:none; color:#fff; padding:8px 12px; border-radius:10px; cursor:pointer; position:relative;">
+          🔔 <span id="topNotifBadge" class="nav-badge hidden" style="position:absolute; top:-4px; right:-4px;">0</span>
+        </button>
+        <div onclick="switchTab('sec-profile')" style="display:flex; align-items:center; gap:10px; color:#fff; cursor:pointer;">
+          <img id="topAvatar" src="https://via.placeholder.com/36" width="36" height="36" style="border-radius:50%; border:2px solid #818cf8; object-fit:cover;" />
+          <span id="topName" style="font-size:14px; font-weight:700;">Student</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="app-layout">
+      <!-- PART 11.39: DESKTOP SIDEBAR NAVIGATION -->
+      <aside id="sidebar" class="sidebar">
+        <button class="nav-btn active" data-sec="sec-dashboard"><span>🏠 Dashboard</span></button>
+        <button class="nav-btn" data-sec="sec-available"><span>⚡ Available Exams</span></button>
+        <button class="nav-btn" data-sec="sec-upcoming"><span>📅 Upcoming Exams</span></button>
+        <button class="nav-btn" data-sec="sec-results"><span>🎯 My Results</span></button>
+        <button class="nav-btn" data-sec="sec-leaderboard"><span>🏆 Leaderboard</span></button>
+        <button class="nav-btn" data-sec="sec-history"><span>📊 Exam History & Analytics</span></button>
+        <button class="nav-btn" data-sec="sec-notifications"><span>🔔 Notifications</span> <span id="sideNotifBadge" class="nav-badge hidden">0</span></button>
+        <button class="nav-btn" data-sec="sec-help"><span>🤖 Help Center & AI Bot</span></button>
+        <button class="nav-btn" data-sec="sec-tickets"><span>🎫 My Support Tickets</span></button>
+        <button class="nav-btn" data-sec="sec-profile"><span>👤 My Profile</span></button>
+        <button class="nav-btn" data-sec="sec-settings"><span>⚙️ Account Settings</span></button>
+        <button class="logout-trigger" style="color:#ef4444; margin-top:auto;"><span>🚪 Logout</span></button>
+      </aside>
+
+      <main class="main-content">
+        <!-- Account Status Banners -->
+        <div id="approvalBanner" class="alert alert-warning hidden">
+          ⏳ <strong>Pending Approval:</strong> Aapka account abhi School Admin ke paas review mein hai. Approval ke baad exams aur results unlock honge.
+        </div>
+        <div id="rejectedBanner" class="alert alert-danger hidden">
+          🚫 <strong>Account Rejected / Suspended:</strong> Aapka account Admin dwara restrict kiya gaya hai. Help Center se sampark karein.
+        </div>
+
+        <!-- Colorful Student Identity Hero Banner -->
+        <div id="portalHeaderCard" class="card" style="margin-bottom: 24px; background: linear-gradient(135deg, #ffffff 0%, #eef2ff 100%); display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:16px;">
+          <div style="display:flex; align-items:center; gap:16px;">
+            <img id="cardAvatar" src="https://via.placeholder.com/60" width="60" height="60" style="border-radius:18px; object-fit:cover; border:3px solid var(--indigo);" />
+            <div>
+              <h2 id="welcomeMsg" style="font-size:21px; font-weight:800;">Welcome, Student!</h2>
+              <p id="studentMeta" style="color: var(--muted); font-size: 13.5px; font-weight:500;">Loading academic info...</p>
+              <p id="studentUidDisplay" style="color: var(--indigo); font-size: 11.5px; font-weight:700; margin-top:2px;">UID: -</p>
+            </div>
+          </div>
+          <span id="statusBadge" class="badge badge-pending">Pending</span>
+        </div>
+
+        <!-- ==================== PART 2: MAIN DASHBOARD ==================== -->
+        <section id="sec-dashboard" class="portal-sec">
+          <!-- 5 Colorful Gradient Stats -->
+          <div class="stats-grid">
+            <div class="stat-card stat-blue">
+              <span style="font-size:12px; font-weight:700; opacity:0.9;">TOTAL EXAMS</span>
+              <h2 id="statTotal" style="font-size:30px; margin-top:6px;">0</h2>
+            </div>
+            <div class="stat-card stat-emerald">
+              <span style="font-size:12px; font-weight:700; opacity:0.9;">AVAILABLE / LIVE</span>
+              <h2 id="statAvailable" style="font-size:30px; margin-top:6px;">0</h2>
+            </div>
+            <div class="stat-card stat-violet">
+              <span style="font-size:12px; font-weight:700; opacity:0.9;">UPCOMING EXAMS</span>
+              <h2 id="statUpcoming" style="font-size:30px; margin-top:6px;">0</h2>
+            </div>
+            <div class="stat-card stat-amber">
+              <span style="font-size:12px; font-weight:700; opacity:0.9;">COMPLETED</span>
+              <h2 id="statCompleted" style="font-size:30px; margin-top:6px;">0</h2>
+            </div>
+            <div class="stat-card stat-pink">
+              <span style="font-size:12px; font-weight:700; opacity:0.9;">AVERAGE SCORE</span>
+              <h2 id="statAvgScore" style="font-size:30px; margin-top:6px;">0%</h2>
+            </div>
+          </div>
+
+          <!-- Part 2.6: Quick Actions -->
+          <h3 style="font-size:16px; margin-bottom:12px;">Quick Actions</h3>
+          <div class="quick-grid">
+            <div class="quick-tile" onclick="switchTab('sec-available')"><div class="quick-icon">⚡</div><span>Available Exams</span></div>
+            <div class="quick-tile" onclick="switchTab('sec-upcoming')"><div class="quick-icon">📅</div><span>Upcoming Exams</span></div>
+            <div class="quick-tile" onclick="switchTab('sec-results')"><div class="quick-icon">🎯</div><span>My Results</span></div>
+            <div class="quick-tile" onclick="switchTab('sec-leaderboard')"><div class="quick-icon">🏆</div><span>Leaderboard</span></div>
+            <div class="quick-tile" onclick="switchTab('sec-history')"><div class="quick-icon">📊</div><span>Exam History</span></div>
+            <div class="quick-tile" onclick="switchTab('sec-notifications')"><div class="quick-icon">🔔</div><span>Notifications</span></div>
+            <div class="quick-tile" onclick="switchTab('sec-help')"><div class="quick-icon">🤖</div><span>Help Center</span></div>
+            <div class="quick-tile" onclick="switchTab('sec-profile')"><div class="quick-icon">👤</div><span>My Profile</span></div>
+          </div>
+
+          <!-- Live Exams & Upcoming Exams on Dashboard -->
+          <h3 style="margin-bottom: 14px; font-size:17px;">⚡ Live & Available Exams</h3>
+          <div id="dashAvailableList" class="cards-grid" style="margin-bottom: 26px;"></div>
+
+          <h3 style="margin-bottom: 14px; font-size:17px;">📅 Scheduled / Upcoming Exams</h3>
+          <div id="dashUpcomingList" class="cards-grid" style="margin-bottom: 26px;"></div>
+
+          <!-- Part 10: Admin Announcements & Important Updates -->
+          <div class="two-col">
+            <div class="card">
+              <h4 style="margin-bottom:10px;">📢 Admin Announcements & Important Updates</h4>
+              <div id="dashAnnouncementsList" style="display:grid; gap:10px;">
+                <p style="color:var(--muted); font-size:13px;">Loading announcements...</p>
+              </div>
+            </div>
+            <div class="card">
+              <h4 style="margin-bottom:10px;">🎯 Latest Results Summary</h4>
+              <div id="dashLatestResult" style="font-size:13.5px; color:var(--muted);">Loading...</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== AVAILABLE EXAMS SECTION ==================== -->
+        <section id="sec-available" class="portal-sec hidden">
+          <h3 style="margin-bottom: 16px;">⚡ Available & Live Exams</h3>
+          <div id="allAvailableList" class="cards-grid"></div>
+        </section>
+
+        <!-- ==================== UPCOMING EXAMS SECTION ==================== -->
+        <section id="sec-upcoming" class="portal-sec hidden">
+          <h3 style="margin-bottom: 16px;">📅 Upcoming Exams</h3>
+          <div id="allUpcomingList" class="cards-grid"></div>
+        </section>
+
+        <!-- ==================== PART 3.9: EXAM INSTRUCTIONS SCREEN ==================== -->
+        <section id="sec-instructions" class="portal-sec hidden">
+          <div class="card" style="max-width: 760px; margin: 0 auto;">
+            <span class="badge badge-live" style="margin-bottom:10px;">Exam Instructions</span>
+            <h2 id="instExamTitle" style="font-size:24px; margin-bottom:6px;">Exam Title</h2>
+            <p id="instSubject" style="color:var(--indigo); font-weight:700; margin-bottom:20px;">Subject</p>
+
+            <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); margin-bottom:20px;">
+              <div class="card" style="background:#f8fafc; padding:14px;"><small>Questions</small><h3 id="instTotalQ">0</h3></div>
+              <div class="card" style="background:#f8fafc; padding:14px;"><small>Total Marks</small><h3 id="instTotalMarks">0</h3></div>
+              <div class="card" style="background:#f8fafc; padding:14px;"><small>Duration</small><h3 id="instDuration">0m</h3></div>
+              <div class="card" style="background:#f8fafc; padding:14px;"><small>Passing Marks</small><h3 id="instPassMarks">0</h3></div>
+              <div class="card" style="background:#f8fafc; padding:14px;"><small>Negative Marking</small><h3 id="instNegMarks">No</h3></div>
+            </div>
+
+            <div class="alert alert-info" id="instScheduleInfo">Start & End Time</div>
+
+            <div style="background:#f8fafc; padding:18px; border-radius:12px; border:1px solid var(--border); margin-bottom:22px;">
+              <h4 style="margin-bottom:8px;">Important Exam Rules:</h4>
+              <p id="instCustomText" style="font-size:14px; color:#334155; margin-bottom:8px;"></p>
+              <ul style="padding-left:18px; font-size:13.5px; color:var(--muted); display:grid; gap:6px;">
+                <li>Har answer select karne par automatically Firebase mein save hoga.</li>
+                <li>Browser refresh hone par aapke saved answers aur timer wapas restore honge.</li>
+                <li>Time samapt hone par exam automatically submit ho jayega.</li>
+                <li>Ek hi exam ko dobara submit nahi kiya ja sakta.</li>
+              </ul>
+            </div>
+
+            <div style="display:flex; gap:12px; justify-content:flex-end;">
+              <button onclick="switchTab('sec-available')" class="btn btn-outline">Cancel</button>
+              <button id="confirmBeginExamBtn" class="btn btn-primary" style="padding:13px 28px;">Start Exam Now →</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== PART 3.10-15: ONLINE EXAM INTERFACE ==================== -->
+        <section id="sec-exam" class="portal-sec hidden">
+          <div style="background:linear-gradient(90deg, #0f172a, #1e1b4b); color:#fff; padding:16px 22px; border-radius:var(--radius); display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <div>
+              <h3 id="examTitleHeader" style="font-size:17px;">Exam Title</h3>
+              <span id="examSubjectHeader" style="font-size:13px; color:#a5b4fc;">Subject</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:12px;">
+              <span id="autoSaveBadge" style="font-size:12px; color:#6ee7b7; font-weight:700;">● Saved</span>
+              <div style="background:var(--rose); padding:8px 16px; border-radius:12px; font-weight:800; font-size:17px;" id="timerDisplay">00:00</div>
+            </div>
+          </div>
+
+          <div id="timeWarning" class="alert alert-danger hidden"></div>
+
+          <div class="exam-layout">
+            <div class="card">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; border-bottom:1px solid var(--border); padding-bottom:12px;">
+                <span style="font-weight:800; color:var(--indigo);" id="qNumberLabel">Question 1 of 10</span>
+                <span class="badge badge-upcoming" id="qMarksLabel">1 Mark</span>
+              </div>
+
+              <p id="qText" style="font-size:17px; font-weight:700; margin-bottom:22px; line-height:1.6;">Loading question...</p>
+              <div id="optionsContainer"></div>
+
+              <div style="display:flex; flex-wrap:wrap; gap:10px; justify-content:space-between; margin-top:26px; border-top:1px solid var(--border); padding-top:18px;">
+                <div style="display:flex; gap:8px;">
+                  <button id="prevBtn" class="btn btn-outline">← Previous</button>
+                  <button id="saveNextBtn" class="btn btn-primary">Save & Next →</button>
+                </div>
+                <div style="display:flex; gap:8px;">
+                  <button id="reviewBtn" class="btn btn-accent">Mark for Review</button>
+                  <button id="clearBtn" class="btn btn-outline">Clear Response</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 5-Color Question Palette -->
+            <div class="card">
+              <h4 style="font-size:15px;">Question Palette</h4>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; font-size:11.5px; margin-top:12px; padding:10px; background:#f8fafc; border-radius:12px; border:1px solid var(--border);">
+                <span>⬜ Not Visited: <b id="cntNotVis">0</b></span>
+                <span style="color:#059669; font-weight:700;">🟩 Answered: <b id="cntAns">0</b></span>
+                <span style="color:#dc2626; font-weight:700;">🟥 Not Answered: <b id="cntUnans">0</b></span>
+                <span style="color:#7c3aed; font-weight:700;">🟪 Review: <b id="cntRev">0</b></span>
+                <span style="color:#4f46e5; font-weight:700; grid-column:span 2;">💠 Ans & Review: <b id="cntAnsRev">0</b></span>
+              </div>
+              <div id="paletteGrid" class="palette-grid"></div>
+              <button id="openSubmitModalBtn" class="btn btn-success" style="width:100%; margin-top:22px; padding:14px; font-size:15px;">
+                Submit Exam
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== PART 4: MY RESULTS & QUESTION-WISE REVIEW ==================== -->
+        <section id="sec-results" class="portal-sec hidden">
+          <div id="singleResultBox" class="hidden" style="margin-bottom:24px;"></div>
+
+          <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:12px; margin-bottom:16px;">
+            <h3>🎯 My Published Results</h3>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+              <select id="resFilterSubject" class="form-control" style="width:auto;"><option value="">All Subjects</option></select>
+              <input type="date" id="resFilterDate" class="form-control" style="width:auto;" />
+            </div>
+          </div>
+
+          <div class="card table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>Exam Name</th>
+                  <th>Subject</th>
+                  <th>Marks</th>
+                  <th>Percentage</th>
+                  <th>Accuracy</th>
+                  <th>Status</th>
+                  <th>Details</th>
+                </tr>
+              </thead>
+              <tbody id="resultsTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ==================== PART 5: DELAYED LEADERBOARD ==================== -->
+        <section id="sec-leaderboard" class="portal-sec hidden">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:10px;">
+            <h3>🏆 EXAMORA Leaderboard</h3>
+            <span class="badge badge-upcoming">Released 30 mins after exam end</span>
+          </div>
+
+          <div class="card" style="margin-bottom: 22px; display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:14px;">
+            <div>
+              <label style="font-size:12px; font-weight:700; color:var(--muted);">School Wise</label>
+              <select id="fSchool" class="form-control"><option value="">All Schools</option></select>
+            </div>
+            <div>
+              <label style="font-size:12px; font-weight:700; color:var(--muted);">Class Wise</label>
+              <select id="fClass" class="form-control"><option value="">All Classes</option></select>
+            </div>
+            <div>
+              <label style="font-size:12px; font-weight:700; color:var(--muted);">Exam Wise</label>
+              <select id="fExam" class="form-control"><option value="">Overall Ranking</option></select>
+            </div>
+          </div>
+
+          <div id="topThreeGrid" class="cards-grid" style="margin-bottom: 22px;"></div>
+
+          <div class="card table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>Rank</th>
+                  <th>Student</th>
+                  <th>School</th>
+                  <th>Class</th>
+                  <th>Exam</th>
+                  <th>Total Marks</th>
+                  <th>Percentage</th>
+                </tr>
+              </thead>
+              <tbody id="leaderTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ==================== PART 6: EXAM HISTORY & PERFORMANCE ANALYTICS ==================== -->
+        <section id="sec-history" class="portal-sec hidden">
+          <h3 style="margin-bottom: 16px;">📊 Performance Analytics & Exam History</h3>
+
+          <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
+            <div class="card"><small style="color:var(--muted);">Average Marks</small><h2 id="anAvgMarks" style="color:var(--blue); margin-top:4px;">0</h2></div>
+            <div class="card"><small style="color:var(--muted);">Highest Marks</small><h2 id="anHighMarks" style="color:var(--emerald); margin-top:4px;">0</h2></div>
+            <div class="card"><small style="color:var(--muted);">Overall Accuracy</small><h2 id="anAccuracy" style="color:var(--violet); margin-top:4px;">0%</h2></div>
+            <div class="card"><small style="color:var(--muted);">Total Attempted</small><h2 id="anTotalExams" style="color:var(--amber); margin-top:4px;">0</h2></div>
+          </div>
+
+          <div class="card" style="margin-bottom:22px;">
+            <h4 style="margin-bottom:14px;">Subject-Wise Performance</h4>
+            <div id="subjectAnalyticsBars" style="display:grid; gap:12px;">
+              <p style="color:var(--muted); font-size:13.5px;">Complete exams to see subject-wise analytics.</p>
+            </div>
+          </div>
+
+          <div class="card table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>Exam Name</th>
+                  <th>Exam Date</th>
+                  <th>Obtained Marks</th>
+                  <th>Percentage</th>
+                  <th>Result Status</th>
+                  <th>Attempt Status</th>
+                </tr>
+              </thead>
+              <tbody id="historyTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ==================== PART 7: NOTIFICATION CENTER ==================== -->
+        <section id="sec-notifications" class="portal-sec hidden">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <h3>🔔 Notification Center</h3>
+            <button id="markAllReadBtn" class="btn btn-outline">Mark All as Read</button>
+          </div>
+          <div id="notificationsList" style="display:grid; gap:12px;"></div>
+        </section>
+
+        <!-- ==================== PART 8: HELP CENTER, AI HELP BOT & TICKETS ==================== -->
+        <section id="sec-help" class="portal-sec hidden">
+          <h3 style="margin-bottom: 16px;">🤖 Help Center & AI Support Assistant</h3>
+
+          <div class="two-col" style="margin-bottom:24px;">
+            <!-- AI Help Bot -->
+            <div class="card">
+              <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+                <span style="font-size:24px;">🤖</span>
+                <div>
+                  <h4>EXAMORA AI Help Bot</h4>
+                  <small style="color:var(--muted);">Ask about Approval, Exams, Results, or Tickets</small>
+                </div>
+              </div>
+
+              <div id="aiChatBox" class="chat-box">
+                <div class="msg-bubble msg-bot">
+                  Namaste! Main <strong>EXAMORA AI Assistant</strong> hoon. Aap mujhse apne Account Approval, Upcoming Exams, Results ya Support Ticket ke baare mein pooch sakte hain.
+                </div>
+              </div>
+
+              <div style="display:flex; flex-wrap:wrap; gap:6px; margin:10px 0;">
+                <button type="button" class="pill ai-quick-q" style="cursor:pointer;">Mera account approve hua?</button>
+                <button type="button" class="pill ai-quick-q" style="cursor:pointer;">Next exam kab hai?</button>
+                <button type="button" class="pill ai-quick-q" style="cursor:pointer;">Result kab aayega?</button>
+              </div>
+
+              <form id="aiChatForm" style="display:flex; gap:8px;">
+                <input type="text" id="aiPromptInput" class="form-control" placeholder="Apna sawal likhein..." required />
+                <button type="submit" class="btn btn-primary">Send</button>
+              </form>
+            </div>
+
+            <!-- Raise Support Ticket -->
+            <div class="card">
+              <h4 style="margin-bottom:12px;">🎫 Raise a Support Ticket</h4>
+              <p style="font-size:13px; color:var(--muted); margin-bottom:14px;">Agar AI Bot aapki samasya hal nahi kar paya, toh seedha Admin ko ticket bhejein.</p>
+
+              <div id="ticketSuccessAlert" class="alert alert-success hidden"></div>
+
+              <form id="raiseTicketForm">
+                <div class="form-group">
+                  <label>Ticket Category *</label>
+                  <select id="ticketCategory" class="form-control" required>
+                    <option value="Account Problem">Account Problem</option>
+                    <option value="Login Problem">Login Problem</option>
+                    <option value="Exam Problem">Exam Problem</option>
+                    <option value="Result Problem">Result Problem</option>
+                    <option value="Payment Problem">Payment Problem</option>
+                    <option value="Technical Problem">Technical Problem</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Subject *</label>
+                  <input type="text" id="ticketSubject" class="form-control" placeholder="Short summary of issue" required />
+                </div>
+                <div class="form-group">
+                  <label>Problem Description *</label>
+                  <textarea id="ticketDesc" class="form-control" rows="4" placeholder="Apni samasya vistaar se likhein..." required></textarea>
+                </div>
+                <button type="submit" id="submitTicketBtn" class="btn btn-accent" style="width:100%;">Submit Support Ticket</button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Searchable FAQs -->
+          <div class="card">
+            <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:12px; margin-bottom:16px;">
+              <h4>Frequently Asked Questions (FAQs)</h4>
+              <input type="search" id="faqSearchInput" class="form-control" style="max-width:300px;" placeholder="🔍 Search FAQs..." />
+            </div>
+            <div id="faqListContainer" style="display:grid; gap:12px;"></div>
+          </div>
+        </section>
+
+        <!-- ==================== MY SUPPORT TICKETS & CONVERSATION ==================== -->
+        <section id="sec-tickets" class="portal-sec hidden">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <h3>🎫 My Support Tickets</h3>
+            <button onclick="switchTab('sec-help')" class="btn btn-primary">+ New Ticket</button>
+          </div>
+
+          <div id="ticketConversationBox" class="card hidden" style="margin-bottom:22px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:12px; margin-bottom:14px;">
+              <div>
+                <h4 id="convTicketTitle">Ticket Subject</h4>
+                <small id="convTicketMeta" style="color:var(--muted);">ID: -</small>
+              </div>
+              <button onclick="document.getElementById('ticketConversationBox').classList.add('hidden')" class="btn btn-outline">Close</button>
+            </div>
+            <div id="ticketMessagesList" class="chat-box" style="height:260px; margin-bottom:12px;"></div>
+            <form id="replyTicketForm" style="display:flex; gap:8px;">
+              <input type="text" id="ticketReplyInput" class="form-control" placeholder="Write reply to Admin..." required />
+              <button type="submit" class="btn btn-primary">Send Reply</button>
+            </form>
+          </div>
+
+          <div class="card table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>Ticket ID</th>
+                  <th>Subject</th>
+                  <th>Category</th>
+                  <th>Last Updated</th>
+                  <th>Status</th>
+                  <th>Chat</th>
+                </tr>
+              </thead>
+              <tbody id="ticketsTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ==================== PART 9: MY PROFILE (CONTROLLED EDITING) ==================== -->
+        <section id="sec-profile" class="portal-sec hidden">
+          <div class="card" style="max-width: 680px;">
+            <div style="display:flex; align-items:center; gap:16px; margin-bottom:20px; border-bottom:1px solid var(--border); padding-bottom:18px;">
+              <img id="pPhoto" src="https://via.placeholder.com/72" width="72" height="72" style="border-radius:18px; object-fit:cover; border:3px solid var(--indigo);" />
+              <div>
+                <h2 id="pName">Student Name</h2>
+                <span id="pStatus" class="badge badge-pending" style="margin-top:4px;">Pending</span>
+              </div>
+            </div>
+
+            <div class="alert alert-info">
+              🔒 School, Class, Approval Status, UID aur Role keval Admin dwara badle ja sakte hain.
+            </div>
+
+            <table>
+              <tr><th style="width:40%;">Full Name</th><td id="tName">-</td></tr>
+              <tr><th>Father's Name</th><td id="tFather">-</td></tr>
+              <tr><th>Mobile Number</th><td id="tMobile">-</td></tr>
+              <tr><th>School</th><td id="tSchool">-</td></tr>
+              <tr><th>Class</th><td id="tClass">-</td></tr>
+              <tr><th>Section</th><td id="tSection">-</td></tr>
+              <tr><th>Roll Number</th><td id="tRoll">-</td></tr>
+              <tr><th>Email</th><td id="tEmail">-</td></tr>
+              <tr><th>Student UID</th><td id="tUid">-</td></tr>
+            </table>
+
+            <!-- Editable Allowed Fields -->
+            <form id="editProfileForm" style="margin-top:20px; border-top:1px solid var(--border); padding-top:16px;">
+              <h4 style="margin-bottom:12px;">Update Allowed Contact Details</h4>
+              <div class="two-col">
+                <div class="form-group">
+                  <label>Mobile Number</label>
+                  <input type="tel" id="editMobile" class="form-control" />
+                </div>
+                <div class="form-group">
+                  <label>Profile Photo URL</label>
+                  <input type="url" id="editPhoto" class="form-control" />
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary">Save Profile Changes</button>
+            </form>
+          </div>
+        </section>
+
+        <!-- ==================== PART 9.35: ACCOUNT SETTINGS ==================== -->
+        <section id="sec-settings" class="portal-sec hidden">
+          <div class="card" style="max-width: 680px; display:grid; gap:16px;">
+            <h3>⚙️ Account & Session Settings</h3>
+            <div style="background:#f8fafc; padding:16px; border-radius:12px; border:1px solid var(--border);">
+              <h4>Session & Security</h4>
+              <p id="sessionInfoText" style="font-size:13.5px; color:var(--muted); margin-top:4px;">Active Firebase Session</p>
+            </div>
+            <div style="background:#f8fafc; padding:16px; border-radius:12px; border:1px solid var(--border);">
+              <h4>Privacy & Data Protection</h4>
+              <p style="font-size:13.5px; color:var(--muted); margin-top:4px;">Aapka personal email aur mobile number leaderboard par kabhi public nahi hota.</p>
+            </div>
+            <div style="display:flex; gap:12px; flex-wrap:wrap;">
+              <button onclick="switchTab('sec-help')" class="btn btn-outline">Help & Support</button>
+              <button class="btn btn-danger logout-trigger">Sign Out of All Sessions</button>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+
+    <!-- PART 11.38: MOBILE BOTTOM NAVIGATION -->
+    <nav class="mobile-bottom-nav">
+      <button class="mob-nav active" data-sec="sec-dashboard" onclick="switchTab('sec-dashboard')">🏠<span>Home</span></button>
+      <button class="mob-nav" data-sec="sec-available" onclick="switchTab('sec-available')">⚡<span>Exams</span></button>
+      <button class="mob-nav" data-sec="sec-results" onclick="switchTab('sec-results')">🎯<span>Results</span></button>
+      <button class="mob-nav" data-sec="sec-notifications" onclick="switchTab('sec-notifications')">🔔<span>Alerts</span></button>
+      <button class="mob-nav" data-sec="sec-profile" onclick="switchTab('sec-profile')">👤<span>Profile</span></button>
+    </nav>
+  </div>
+
+  <!-- PART 3.14: EXAM SUBMISSION CONFIRMATION POPUP -->
+  <div id="submitConfirmModal" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <h3 style="font-size:20px; margin-bottom:8px;">Confirm Exam Submission</h3>
+      <p style="font-size:13.5px; color:var(--muted); margin-bottom:18px;">Submit karne ke baad aap apne answers mein koi badlav nahi kar payenge.</p>
+
+      <div class="stats-grid" style="grid-template-columns:1fr 1fr; margin-bottom:20px;">
+        <div class="card" style="background:#f8fafc; padding:12px;"><small>Total Questions</small><h3 id="mTotalQ">0</h3></div>
+        <div class="card" style="background:#ecfdf5; padding:12px;"><small style="color:#047857;">Answered</small><h3 id="mAnsQ" style="color:#047857;">0</h3></div>
+        <div class="card" style="background:#fef2f2; padding:12px;"><small style="color:#b91c1c;">Unanswered</small><h3 id="mUnansQ" style="color:#b91c1c;">0</h3></div>
+        <div class="card" style="background:#f5f3ff; padding:12px;"><small style="color:#6d28d9;">Marked for Review</small><h3 id="mRevQ" style="color:#6d28d9;">0</h3></div>
+      </div>
+
+      <div style="display:flex; gap:12px; justify-content:flex-end;">
+        <button onclick="document.getElementById('submitConfirmModal').classList.add('hidden')" class="btn btn-outline">Continue Exam</button>
+        <button id="finalConfirmSubmitBtn" class="btn btn-success">Yes, Submit Final Exam</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== FIREBASE INTEGRATION (PROJECT: examora-60898 | SDK: 10.12.2) ==================== -->
+  <script type="module">
+    import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult,
+      signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import {
+      getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, addDoc, collection,
+      query, where, getDocs, orderBy, serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCJsjRwpawsibpZwmGWT-MaVwCnzVtIdsU",
+      authDomain: "examora-60898.firebaseapp.com",
+      projectId: "examora-60898",
+      storageBucket: "examora-60898.firebasestorage.app",
+      messagingSenderId: "1023166635260",
+      appId: "1:1023166635260:web:dde8de7551e70bb26c0b79",
+      measurementId: "G-5FTTRMLF73"
+    };
+
+    const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: "select_account" });
+
+    let currentUser = null;
+    let userProfile = null;
+    let examsCache = {};
+    let attemptsCache = {};
+    let resultsCache = {};
+    let publishedLeaderboard = [];
+    let isHandlingAuth = false;
+    let activeTicketId = null;
+
+    // Active Exam State
+    let pendingExamToStart = null;
+    let activeExam = null;
+    let activeQuestions = [];
+    let currentQIdx = 0;
+    let visitedSet = new Set();
+    let answers = {};
+    let markedReview = {};
+    let attemptRef = null;
+    let timerInterval = null;
+    let isSubmitting = false;
+
+    const DEFAULT_FAQS = [
+      { q: "Mera Account Approved kyon nahi hua?", a: "Naye student registration ke baad account 'Pending' rehta hai. Aapke School Admin dwara verify aur approve karne ke baad exams unlock ho jate hain." },
+      { q: "Exam kab aur kaise start hoga?", a: "Approved students ko 'Available Exams' mein apne school aur class ke live exams dikhte hain. Nirdharit Start Time ke baad 'Start Exam' button kaam karta hai." },
+      { q: "Exam ke dauran internet band ya page refresh ho jaye toh kya hoga?", a: "Har answer select karte hi Firebase mein auto-save hota hai. Page refresh karne par aapke saved answers aur bacha hua time restore ho jata hai." },
+      { q: "Mera Result aur Leaderboard kab dikhega?", a: "Admin dwara Result Publish karne par 'My Results' mein dikhta hai. Leaderboard exam samapt hone ke 30 minute baad release hota hai." },
+      { q: "Support Ticket kaise raise karein?", a: "Help Center mein 'Raise a Support Ticket' form bharein. Aapko ek Unique Ticket ID milegi aur aap 'My Support Tickets' mein Admin se chat kar sakenge." }
+    ];
+
+    function normalizeClass(val) {
+      if (!val) return "";
+      const cleaned = String(val).toLowerCase().replace(/[^a-z0-9]/g, "");
+      return cleaned.startsWith("class") ? cleaned : `class${cleaned}`;
+    }
+
+    function extractQuestionOptions(q) {
+      if (!q) return [];
+      if (q.type === "true_false") return ["True", "False"];
+      if (Array.isArray(q.options)) return q.options;
+      if (q.options && typeof q.options === "object") {
+        return [q.options.A, q.options.B, q.options.C, q.options.D].filter(v => v !== undefined && v !== "");
+      }
+      return [q.optionA, q.optionB, q.optionC, q.optionD].filter(v => v !== undefined && v !== "");
+    }
+
+    function resolveCorrectOptionIndex(q, opts) {
+      const raw = q.correctOption !== undefined ? q.correctOption : (q.correctAnswer !== undefined ? q.correctAnswer : q.answer);
+      if (typeof raw === "number") return raw;
+      if (typeof raw === "string") {
+        const trimmed = raw.trim();
+        if (/^[0-3]$/.test(trimmed)) return Number(trimmed);
+        const upper = trimmed.toUpperCase();
+        if (upper === "A") return 0;
+        if (upper === "B") return 1;
+        if (upper === "C") return 2;
+        if (upper === "D") return 3;
+        const textIdx = opts.findIndex(o => String(o).trim().toLowerCase() === trimmed.toLowerCase());
+        if (textIdx !== -1) return textIdx;
+      }
+      return -1;
+    }
+
+    function showView(viewId) {
+      ['view-login', 'view-register', 'view-portal'].forEach(id => {
+        document.getElementById(id).classList.toggle('hidden', id !== viewId);
+      });
+    }
+
+    window.switchTab = function(secId) {
+      if (activeExam && secId !== 'sec-exam') {
+        if (!confirm("Exam is currently running. Leave exam screen?")) return;
+        clearInterval(timerInterval);
+        activeExam = null;
+      }
+      document.getElementById('portalHeaderCard').classList.toggle('hidden', secId === 'sec-exam' || secId === 'sec-instructions');
+      document.querySelectorAll('.portal-sec').forEach(s => s.classList.add('hidden'));
+      document.getElementById(secId).classList.remove('hidden');
+
+      document.querySelectorAll('.nav-btn, .mob-nav').forEach(b => {
+        b.classList.toggle('active', b.dataset.sec === secId);
+      });
+      document.getElementById('sidebar').classList.remove('open');
+
+      if (secId === 'sec-leaderboard') loadLeaderboard();
+      if (secId === 'sec-tickets') loadMyTickets();
+      if (secId === 'sec-help') renderFAQs("");
+    };
+
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+      btn.addEventListener('click', () => switchTab(btn.dataset.sec));
+    });
+
+    document.getElementById('menuToggle').addEventListener('click', () => {
+      document.getElementById('sidebar').classList.toggle('open');
+    });
+
+    document.querySelectorAll('.logout-trigger').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        clearInterval(timerInterval);
+        activeExam = null;
+        await signOut(auth);
+      });
+    });
+
+    document.getElementById('openRegisterLink').addEventListener('click', async (e) => {
+      e.preventDefault();
+      await setupRegistrationForm(null);
+      showView('view-register');
+    });
+
+    document.getElementById('backToLoginBtn').addEventListener('click', async () => {
+      if (auth.currentUser) await signOut(auth);
+      showView('view-login');
+    });
+
+    function formatAuthError(err) {
+      const code = err?.code || "";
+      switch (code) {
+        case "auth/unauthorized-domain":
+          return `Domain "${window.location.hostname}" is not authorized in Firebase Console.`;
+        case "auth/popup-blocked":
+          return "Popup blocked by browser. Click 'Sign in via Redirect' below.";
+        case "auth/popup-closed-by-user":
+          return "Google Sign-In popup was closed before completing login.";
+        case "auth/network-request-failed":
+          return "Network error. Please check your internet connection.";
+        case "auth/invalid-credential":
+        case "auth/wrong-password":
+          return "Incorrect email or password.";
+        case "auth/user-not-found":
+          return "No student account found with this email.";
+        case "auth/email-already-in-use":
+          return "Email already registered. Please sign in.";
+        default:
+          return err?.message || "Authentication failed.";
+      }
+    }
+
+    function setGoogleLoading(isLoading, statusMsg = "", isError = false) {
+      const popupBtn = document.getElementById('googleLoginBtn');
+      const popupText = document.getElementById('googleBtnText');
+      const redirectBtn = document.getElementById('googleRedirectBtn');
+      const statusEl = document.getElementById('loginStatus');
+
+      popupBtn.disabled = isLoading;
+      redirectBtn.disabled = isLoading;
+      popupText.textContent = isLoading ? "Please wait..." : "Continue with Google";
+
+      if (statusMsg) {
+        statusEl.style.color = isError ? "#dc2626" : "#64748b";
+        statusEl.textContent = statusMsg;
+      }
+    }
+
+    // Google Popup Login
+    document.getElementById('googleLoginBtn').addEventListener('click', async () => {
+      const redirectBtn = document.getElementById('googleRedirectBtn');
+      redirectBtn.classList.remove('highlight');
+      setGoogleLoading(true, "Opening Google Sign-In...");
+
+      try {
+        await signInWithPopup(auth, provider);
+      } catch (err) {
+        setGoogleLoading(false, formatAuthError(err), true);
+        if (err.code === "auth/popup-blocked" || err.code === "auth/operation-not-supported-in-this-environment") {
+          redirectBtn.classList.add('highlight');
+        }
+      } finally {
+        document.getElementById('googleLoginBtn').disabled = false;
+        document.getElementById('googleRedirectBtn').disabled = false;
+        document.getElementById('googleBtnText').textContent = "Continue with Google";
+      }
+    });
+
+    // Google Redirect Login
+    document.getElementById('googleRedirectBtn').addEventListener('click', async () => {
+      setGoogleLoading(true, "Redirecting to Google...");
+      try {
+        await signInWithRedirect(auth, provider);
+      } catch (err) {
+        setGoogleLoading(false, formatAuthError(err), true);
+      }
+    });
+
+    (async function handleRedirectReturn() {
+      try {
+        const res = await getRedirectResult(auth);
+        if (res && res.user) setGoogleLoading(true, "Completing sign-in...");
+      } catch (err) {
+        setGoogleLoading(false, formatAuthError(err), true);
+      }
+    })();
+
+    // Email Login
+    document.getElementById('emailLoginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('emailLoginBtn');
+      const statusEl = document.getElementById('loginStatus');
+      btn.disabled = true;
+      btn.textContent = "Signing in...";
+      try {
+        await signInWithEmailAndPassword(auth, document.getElementById('loginEmail').value.trim(), document.getElementById('loginPassword').value);
+      } catch (err) {
+        statusEl.style.color = "#dc2626";
+        statusEl.textContent = formatAuthError(err);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Sign In to Portal";
+      }
+    });
+
+    // Auth Observer
+    onAuthStateChanged(auth, async (user) => {
+      if (isHandlingAuth) return;
+      if (!user) {
+        currentUser = null;
+        userProfile = null;
+        setGoogleLoading(false);
+        showView('view-login');
+        return;
+      }
+
+      isHandlingAuth = true;
+      currentUser = user;
+      try {
+        setGoogleLoading(true, "Loading student profile...");
+        const uSnap = await getDoc(doc(db, "users", user.uid));
+        if (!uSnap.exists()) {
+          await setupRegistrationForm(user);
+          showView('view-register');
+        } else {
+          userProfile = uSnap.data();
+          showView('view-portal');
+          renderProfileData();
+          await Promise.all([
+            loadDashboardData(),
+            loadNotifications(),
+            loadAnnouncements()
+          ]);
+        }
+      } catch (err) {
+        setGoogleLoading(false, err.message, true);
+        showView('view-login');
+      } finally {
+        isHandlingAuth = false;
+        setGoogleLoading(false);
+      }
+    });
+
+    // Registration Setup
+    async function setupRegistrationForm(user) {
+      document.getElementById('regErrorBox').classList.add('hidden');
+      const emailInput = document.getElementById('regEmail');
+      const passGroup = document.getElementById('regPasswordGroup');
+      const passInput = document.getElementById('regPassword');
+
+      if (user) {
+        document.getElementById('regFullName').value = user.displayName || "";
+        document.getElementById('regPhotoUrl').value = user.photoURL || "";
+        emailInput.value = user.email;
+        emailInput.disabled = true;
+        passGroup.classList.add('hidden');
+        passInput.required = false;
+        document.getElementById('regUid').value = user.uid;
+      } else {
+        document.getElementById('regForm').reset();
+        emailInput.disabled = false;
+        passGroup.classList.remove('hidden');
+        passInput.required = true;
+        document.getElementById('regUid').value = "Generated automatically";
+      }
+
+      const schoolSelect = document.getElementById('regSchoolId');
+      schoolSelect.innerHTML = '<option value="">Loading schools...</option>';
+      const snap = await getDocs(collection(db, "schools"));
+      schoolSelect.innerHTML = '<option value="">-- Select School --</option>';
+      snap.forEach(d => {
+        schoolSelect.innerHTML += `<option value="${d.id}" data-name="${d.data().name}">${d.data().name}</option>`;
+      });
+    }
+
+    document.getElementById('regForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('regSubmitBtn');
+      const errBox = document.getElementById('regErrorBox');
+      errBox.classList.add('hidden');
+      btn.disabled = true;
+      btn.textContent = "Submitting...";
+
+      const schoolEl = document.getElementById('regSchoolId');
+      const selectedSchoolId = schoolEl.value;
+      const enteredClassName = document.getElementById('regClassName').value.trim();
+
+      try {
+        let activeUser = currentUser;
+        if (!activeUser) {
+          const cred = await createUserWithEmailAndPassword(
+            auth,
+            document.getElementById('regEmail').value.trim(),
+            document.getElementById('regPassword').value
+          );
+          activeUser = cred.user;
+          currentUser = activeUser;
+        }
+
+        const userDocRef = doc(db, "users", activeUser.uid);
+        const existingSnap = await getDoc(userDocRef);
+        if (existingSnap.exists()) {
+          userProfile = existingSnap.data();
+          showView('view-portal');
+          renderProfileData();
+          return;
+        }
+
+        // Resolve matching Firestore classId from `classes` collection
+        let resolvedClassId = enteredClassName.toLowerCase().replace(/\s+/g, "_");
+        try {
+          const cSnap = await getDocs(query(collection(db, "classes"), where("schoolId", "==", selectedSchoolId)));
+          const normTarget = normalizeClass(enteredClassName);
+          cSnap.forEach(cd => {
+            const cName = cd.data().name || cd.data().className || "";
+            if (normalizeClass(cName) === normTarget) resolvedClassId = cd.id;
+          });
+        } catch (_) {}
+
+        const profilePayload = {
+          uid: activeUser.uid,
+          role: "student",
+          status: "pending",
+          fullName: document.getElementById('regFullName').value.trim(),
+          mobile: document.getElementById('regMobile').value.trim(),
+          fatherName: document.getElementById('regFatherName').value.trim(),
+          dob: document.getElementById('regDob').value,
+          schoolId: selectedSchoolId,
+          schoolName: schoolEl.options[schoolEl.selectedIndex]?.dataset.name || "",
+          classId: resolvedClassId,
+          className: enteredClassName,
+          section: document.getElementById('regSection').value.trim(),
+          rollNumber: document.getElementById('regRollNumber').value.trim(),
+          email: activeUser.email,
+          photoURL: document.getElementById('regPhotoUrl').value.trim() || activeUser.photoURL || "",
+          createdAt: serverTimestamp()
+        };
+
+        await setDoc(userDocRef, profilePayload);
+
+        // Create Registration Successful Notification
+        await addDoc(collection(db, "notifications"), {
+          userId: activeUser.uid,
+          title: "Registration Successful",
+          message: "Aapka registration safaltapoorvak jama ho gaya hai. Admin approval ka intezar karein.",
+          read: false,
+          createdAt: serverTimestamp()
+        });
+
+        userProfile = profilePayload;
+        showView('view-portal');
+        renderProfileData();
+        await Promise.all([loadDashboardData(), loadNotifications(), loadAnnouncements()]);
+      } catch (err) {
+        errBox.textContent = formatAuthError(err);
+        errBox.classList.remove('hidden');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Complete Registration";
+      }
+    });
+
+    function renderProfileData() {
+      const avatar = userProfile.photoURL || "https://via.placeholder.com/72";
+      document.getElementById('topAvatar').src = avatar;
+      document.getElementById('cardAvatar').src = avatar;
+      document.getElementById('pPhoto').src = avatar;
+
+      document.getElementById('topName').textContent = userProfile.fullName;
+      document.getElementById('welcomeMsg').textContent = `Welcome, ${userProfile.fullName}!`;
+      document.getElementById('studentMeta').textContent =
+        `${userProfile.schoolName} • ${userProfile.className} ${userProfile.section ? '('+userProfile.section+')' : ''} • Roll: ${userProfile.rollNumber || 'N/A'}`;
+      document.getElementById('studentUidDisplay').textContent = `Student UID: ${userProfile.uid}`;
+
+      const status = (userProfile.status || "pending").toLowerCase();
+      const isApproved = status === "approved";
+      const isRestricted = status === "rejected" || status === "suspended";
+
+      ['statusBadge', 'pStatus'].forEach(id => {
+        const el = document.getElementById(id);
+        el.textContent = status;
+        el.className = `badge badge-${status}`;
+      });
+
+      document.getElementById('approvalBanner').classList.toggle('hidden', status !== "pending");
+      document.getElementById('rejectedBanner').classList.toggle('hidden', !isRestricted);
+
+      document.getElementById('pName').textContent = userProfile.fullName;
+      document.getElementById('tName').textContent = userProfile.fullName;
+      document.getElementById('tFather').textContent = userProfile.fatherName || "-";
+      document.getElementById('tMobile').textContent = userProfile.mobile || "-";
+      document.getElementById('tSchool').textContent = userProfile.schoolName;
+      document.getElementById('tClass').textContent = userProfile.className;
+      document.getElementById('tSection').textContent = userProfile.section || "-";
+      document.getElementById('tRoll').textContent = userProfile.rollNumber || "-";
+      document.getElementById('tEmail').textContent = userProfile.email;
+      document.getElementById('tUid').textContent = userProfile.uid;
+
+      document.getElementById('editMobile').value = userProfile.mobile || "";
+      document.getElementById('editPhoto').value = userProfile.photoURL || "";
+      document.getElementById('sessionInfoText').textContent = `Signed in as ${userProfile.email} (UID: ${userProfile.uid})`;
+    }
+
+    // Profile Controlled Editing
+    document.getElementById('editProfileForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const mobile = document.getElementById('editMobile').value.trim();
+      const photoURL = document.getElementById('editPhoto').value.trim();
+      try {
+        await updateDoc(doc(db, "users", currentUser.uid), { mobile, photoURL });
+        userProfile.mobile = mobile;
+        userProfile.photoURL = photoURL;
+        renderProfileData();
+        alert("Profile updated successfully!");
+      } catch (err) {
+        alert("Update restricted by Security Rules: " + err.message);
+      }
+    });
+
+    // Load Dashboard, Exams (Supports both `examinations` and `exams` collections), Results & Analytics
+    async function loadDashboardData() {
+      // Load attempts (supports both `exam_attempts` and `examAttempts`)
+      attemptsCache = {};
+      for (const colName of ["exam_attempts", "examAttempts"]) {
+        try {
+          const snap = await getDocs(query(collection(db, colName), where("studentId", "==", currentUser.uid)));
+          snap.forEach(d => { attemptsCache[d.data().examId] = { id: d.id, _col: colName, ...d.data() }; });
+        } catch (_) {}
+      }
+
+      // Load results
+      resultsCache = {};
+      const resSnap = await getDocs(query(collection(db, "results"), where("studentId", "==", currentUser.uid)));
+      resSnap.forEach(d => { resultsCache[d.data().examId] = { id: d.id, ...d.data() }; });
+
+      if (userProfile.status !== "approved") {
+        document.getElementById('dashAvailableList').innerHTML = "<div class='card'><p style='color:var(--muted);'>Account approval pending.</p></div>";
+        document.getElementById('dashUpcomingList').innerHTML = "<div class='card'><p style='color:var(--muted);'>Account approval pending.</p></div>";
+        renderAnalyticsAndHistory([]);
+        return;
+      }
+
+      // Build class map for student's school
+      const classIdToName = {};
+      const matchingClassIds = new Set();
+      if (userProfile.classId) matchingClassIds.add(userProfile.classId);
+      const studentNormClass = normalizeClass(userProfile.className || userProfile.classId);
+
+      try {
+        const cSnap = await getDocs(query(collection(db, "classes"), where("schoolId", "==", userProfile.schoolId)));
+        cSnap.forEach(cd => {
+          const cName = cd.data().name || cd.data().className || "";
+          classIdToName[cd.id] = cName;
+          if (studentNormClass && normalizeClass(cName) === studentNormClass) matchingClassIds.add(cd.id);
+        });
+      } catch (_) {}
+
+      // Fetch exams from `examinations` (and fallback `exams`)
+      const rawExams = [];
+      for (const exCol of ["examinations", "exams"]) {
+        try {
+          const snap = await getDocs(query(collection(db, exCol), where("schoolId", "==", userProfile.schoolId)));
+          snap.forEach(d => rawExams.push({ id: d.id, _col: exCol, ...d.data() }));
+        } catch (_) {}
+      }
+
+      const now = Date.now();
+      let total = 0, availCount = 0, upCount = 0, compCount = 0;
+      let availHTML = "", upHTML = "", resHTML = "";
+      const historyRows = [];
+      const subjectsSet = new Set();
+      examsCache = {};
+
+      rawExams.forEach(ex => {
+        if (examsCache[ex.id]) return;
+
+        const exClassName = ex.className || classIdToName[ex.classId] || "";
+        const isMatch =
+          (ex.classId && matchingClassIds.has(ex.classId)) ||
+          (studentNormClass && exClassName && normalizeClass(exClassName) === studentNormClass);
+
+        if (!isMatch) return;
+
+        total++;
+        examsCache[ex.id] = ex;
+
+        const startMs = ex.startTime?.toMillis ? ex.startTime.toMillis() : (ex.startTime ? new Date(ex.startTime).getTime() : 0);
+        const endMs = ex.endTime?.toMillis ? ex.endTime.toMillis() : (ex.endTime ? new Date(ex.endTime).getTime() : 0);
+        const attempt = attemptsCache[ex.id];
+        const res = resultsCache[ex.id];
+        const rawStatus = (ex.status || "").toLowerCase();
+
+        let status = "Upcoming";
+        if (rawStatus === "cancelled") status = "Cancelled";
+        else if (attempt && attempt.status === "submitted") status = "Completed";
+        else if (rawStatus === "completed" || (endMs > 0 && now > endMs)) status = "Completed";
+        else if ((startMs > 0 && endMs > 0 && now >= startMs && now <= endMs) || rawStatus === "live" || rawStatus === "available") status = "Live";
+
+        const subj = ex.subjectName || ex.subject || "General";
+        subjectsSet.add(subj);
+
+        const card = `
+          <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:start; gap:8px; margin-bottom:12px;">
+                <div>
+                  <h4 style="font-size:16px; font-weight:800;">${ex.title || "Exam"}</h4>
+                  <span style="font-size:13px; color:var(--indigo); font-weight:700;">${subj}</span>
+                </div>
+                <span class="badge badge-${status.toLowerCase()}">${status}</span>
+              </div>
+              <div style="font-size:13px; color:var(--muted); display:grid; gap:4px; margin-bottom:16px;">
+                <div>Class: <strong>${exClassName || userProfile.className}</strong> • Questions: <strong>${ex.totalQuestions || (ex.questions ? ex.questions.length : 0)}</strong></div>
+                <div>Marks: <strong>${ex.totalMarks || 0}</strong> • Duration: <strong>${ex.durationMinutes || 0} mins</strong></div>
+                <div>Start: ${startMs ? new Date(startMs).toLocaleString() : 'Scheduled'}</div>
+                <div>End: ${endMs ? new Date(endMs).toLocaleString() : '-'}</div>
+              </div>
+            </div>
+            ${
+              status === "Live"
+              ? `<button onclick="openExamInstructions('${ex.id}')" class="btn btn-primary" style="width:100%;">Start Exam</button>`
+              : status === "Completed" && (attempt || res)
+              ? `<button onclick="openScorecard('${ex.id}')" class="btn btn-outline" style="width:100%;">View Result</button>`
+              : `<button class="btn btn-outline" style="width:100%;" disabled>${status}</button>`
+            }
+          </div>
+        `;
+
+        if (status === "Live") { availCount++; availHTML += card; }
+        else if (status === "Upcoming") { upCount++; upHTML += card; }
+        else if (status === "Completed") { compCount++; }
+
+        if ((attempt && attempt.status === "submitted") || res) {
+          const rec = res || attempt;
+          const releaseMs = rec.resultReleaseMs || (endMs > 0 ? endMs + 30 * 60 * 1000 : 0);
+          const isReleased = rec.published === true || (releaseMs > 0 && now >= releaseMs);
+
+          historyRows.push({
+            examId: ex.id,
+            title: ex.title,
+            subject: subj,
+            dateStr: startMs ? new Date(startMs).toLocaleDateString() : "-",
+            isoDate: startMs ? new Date(startMs).toISOString().slice(0, 10) : "",
+            obtainedMarks: rec.obtainedMarks || 0,
+            totalMarks: ex.totalMarks || rec.totalMarks || 0,
+            percentage: rec.percentage || 0,
+            accuracy: rec.accuracy || rec.percentage || 0,
+            passed: rec.passed,
+            isReleased
+          });
+        }
+      });
+
+      document.getElementById('statTotal').textContent = total;
+      document.getElementById('statAvailable').textContent = availCount;
+      document.getElementById('statUpcoming').textContent = upCount;
+      document.getElementById('statCompleted').textContent = compCount;
+
+      document.getElementById('dashAvailableList').innerHTML = availHTML || "<div class='card'><p style='color:var(--muted);'>No live exams available right now.</p></div>";
+      document.getElementById('dashUpcomingList').innerHTML = upHTML || "<div class='card'><p style='color:var(--muted);'>No upcoming exams scheduled.</p></div>";
+      document.getElementById('allAvailableList').innerHTML = availHTML || "<div class='card'><p style='color:var(--muted);'>No live exams available right now.</p></div>";
+      document.getElementById('allUpcomingList').innerHTML = upHTML || "<div class='card'><p style='color:var(--muted);'>No upcoming exams scheduled.</p></div>";
+
+      // Populate Result Filters & Tables
+      const subSel = document.getElementById('resFilterSubject');
+      subSel.innerHTML = '<option value="">All Subjects</option>';
+      subjectsSet.forEach(s => { subSel.innerHTML += `<option value="${s}">${s}</option>`; });
+      subSel.onchange = () => renderResultsTable(historyRows);
+      document.getElementById('resFilterDate').onchange = () => renderResultsTable(historyRows);
+
+      renderResultsTable(historyRows);
+      renderAnalyticsAndHistory(historyRows);
+    }
+
+    function renderResultsTable(rows) {
+      const fSub = document.getElementById('resFilterSubject').value;
+      const fDate = document.getElementById('resFilterDate').value;
+
+      const filtered = rows.filter(r => (!fSub || r.subject === fSub) && (!fDate || r.isoDate === fDate));
+      const tbody = document.getElementById('resultsTableBody');
+
+      if (!filtered.length) {
+        tbody.innerHTML = "<tr><td colspan='7'>No matching results found.</td></tr>";
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(r => `
+        <tr>
+          <td><strong>${r.title}</strong></td>
+          <td>${r.subject}</td>
+          <td>${r.isReleased ? `${r.obtainedMarks} / ${r.totalMarks}` : 'Pending Release'}</td>
+          <td>${r.isReleased ? `${r.percentage}%` : '-'}</td>
+          <td>${r.isReleased ? `${r.accuracy}%` : '-'}</td>
+          <td><span class="badge badge-${r.isReleased ? (r.passed ? 'approved' : 'fail') : 'pending'}">${r.isReleased ? (r.passed ? 'Pass' : 'Fail') : 'Awaiting Admin'}</span></td>
+          <td><button onclick="openScorecard('${r.examId}')" class="btn btn-outline" style="padding:6px 12px;">Open</button></td>
+        </tr>
+      `).join('');
+    }
+
+    function renderAnalyticsAndHistory(rows) {
+      const released = rows.filter(r => r.isReleased);
+      const avgPct = released.length ? (released.reduce((s, r) => s + Number(r.percentage), 0) / released.length).toFixed(1) : 0;
+      const avgMarks = released.length ? (released.reduce((s, r) => s + Number(r.obtainedMarks), 0) / released.length).toFixed(1) : 0;
+      const highMarks = released.length ? Math.max(...released.map(r => Number(r.obtainedMarks))) : 0;
+      const avgAcc = released.length ? (released.reduce((s, r) => s + Number(r.accuracy), 0) / released.length).toFixed(1) : 0;
+
+      document.getElementById('statAvgScore').textContent = `${avgPct}%`;
+      document.getElementById('anAvgMarks').textContent = avgMarks;
+      document.getElementById('anHighMarks').textContent = highMarks;
+      document.getElementById('anAccuracy').textContent = `${avgAcc}%`;
+      document.getElementById('anTotalExams').textContent = rows.length;
+
+      document.getElementById('dashLatestResult').innerHTML = released.length
+        ? `<strong>${released[0].title}</strong> (${released[0].subject}) — Score: <strong>${released[0].obtainedMarks}/${released[0].totalMarks} (${released[0].percentage}%)</strong>`
+        : "No published results yet. Results appear after Admin release.";
+
+      // Subject-wise visual bars
+      const subjMap = {};
+      released.forEach(r => {
+        if (!subjMap[r.subject]) subjMap[r.subject] = [];
+        subjMap[r.subject].push(Number(r.percentage));
+      });
+      const barsEl = document.getElementById('subjectAnalyticsBars');
+      const entries = Object.entries(subjMap);
+      if (entries.length) {
+        barsEl.innerHTML = entries.map(([sub, vals]) => {
+          const avg = (vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(1);
+          return `
+            <div>
+              <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:700; margin-bottom:4px;">
+                <span>${sub}</span><span>${avg}%</span>
+              </div>
+              <div style="height:10px; background:#e2e8f0; border-radius:999px; overflow:hidden;">
+                <div style="width:${avg}%; height:100%; background:linear-gradient(90deg, var(--blue), var(--violet));"></div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // History Table
+      const hBody = document.getElementById('historyTableBody');
+      hBody.innerHTML = rows.length
+        ? rows.map(r => `
+            <tr>
+              <td><strong>${r.title}</strong></td>
+              <td>${r.dateStr}</td>
+              <td>${r.isReleased ? `${r.obtainedMarks} / ${r.totalMarks}` : '-'}</td>
+              <td>${r.isReleased ? `${r.percentage}%` : '-'}</td>
+              <td>${r.isReleased ? (r.passed ? 'Pass' : 'Fail') : 'Pending'}</td>
+              <td><span class="badge badge-completed">Submitted</span></td>
+            </tr>
+          `).join('')
+        : "<tr><td colspan='6'>No exam history found.</td></tr>";
+    }
+
+    // Part 3.9: Open Exam Instructions Screen
+    window.openExamInstructions = function(examId) {
+      const ex = examsCache[examId];
+      if (!ex) return;
+      pendingExamToStart = ex;
+
+      const startMs = ex.startTime?.toMillis ? ex.startTime.toMillis() : new Date(ex.startTime).getTime();
+      const endMs = ex.endTime?.toMillis ? ex.endTime.toMillis() : new Date(ex.endTime).getTime();
+
+      document.getElementById('instExamTitle').textContent = ex.title;
+      document.getElementById('instSubject').textContent = ex.subjectName || ex.subject || "General";
+      document.getElementById('instTotalQ').textContent = ex.totalQuestions || (ex.questions ? ex.questions.length : 0);
+      document.getElementById('instTotalMarks').textContent = ex.totalMarks || 0;
+      document.getElementById('instDuration').textContent = `${ex.durationMinutes || 0} mins`;
+      document.getElementById('instPassMarks').textContent = ex.passMarks || Math.ceil((ex.totalMarks || 0) * 0.33);
+      document.getElementById('instNegMarks').textContent = ex.negativeMarking ? `-${ex.negativeMarking}` : "None";
+      document.getElementById('instScheduleInfo').textContent = `Window: ${new Date(startMs).toLocaleString()} — ${new Date(endMs).toLocaleString()}`;
+      document.getElementById('instCustomText').textContent = ex.instructions || "Read every question carefully before selecting your option.";
+
+      switchTab('sec-instructions');
+    };
+
+    document.getElementById('confirmBeginExamBtn').addEventListener('click', () => {
+      if (pendingExamToStart) startExam(pendingExamToStart.id);
+    });
+
+    // Part 3.10-15: Conduct Online Exam (Fixed Multi-Source Question Fetch)
+    async function startExam(examId) {
+      if (userProfile.status !== "approved") return alert("Account not approved.");
+      const ex = examsCache[examId];
+      if (!ex) return;
+
+      const now = Date.now();
+      const startMs = ex.startTime?.toMillis ? ex.startTime.toMillis() : new Date(ex.startTime).getTime();
+      const endMs = ex.endTime?.toMillis ? ex.endTime.toMillis() : new Date(ex.endTime).getTime();
+      if (now < startMs || now > endMs) return alert("Exam window is not active.");
+
+      const attemptId = `${currentUser.uid}_${examId}`;
+      attemptRef = doc(db, "exam_attempts", attemptId);
+      const attSnap = await getDoc(attemptRef);
+
+      let startedAtMs = now;
+      if (attSnap.exists()) {
+        const att = attSnap.data();
+        if (att.status === "submitted") {
+          openScorecard(examId);
+          return;
+        }
+        answers = att.answers || {};
+        markedReview = att.markedReview || {};
+        startedAtMs = att.startedAtMs || now;
+      } else {
+        answers = {};
+        markedReview = {};
+        await setDoc(attemptRef, {
+          studentId: currentUser.uid,
+          studentName: userProfile.fullName,
+          schoolId: userProfile.schoolId,
+          schoolName: userProfile.schoolName,
+          classId: ex.classId || userProfile.classId,
+          className: userProfile.className,
+          examId,
+          examTitle: ex.title,
+          subjectName: ex.subjectName || ex.subject || "",
+          status: "in_progress",
+          startedAtMs,
+          answers: {},
+          markedReview: {}
+        });
+      }
+
+      // 1. Check embedded questions array inside exam doc
+      let qList = Array.isArray(ex.questions) ? [...ex.questions] : [];
+
+      // 2. Fetch from `questions` collection by `examId` (or `examinationId`)
+      if (!qList.length) {
+        try {
+          const qSnap = await getDocs(query(collection(db, "questions"), where("examId", "==", examId)));
+          qSnap.forEach(qd => qList.push({ id: qd.id, ...qd.data() }));
+        } catch (err) {
+          console.error("Firestore Question Fetch Error (by examId):", err.code, err.message, err);
+        }
+      }
+
+      if (!qList.length) {
+        try {
+          const qSnapAlt = await getDocs(query(collection(db, "questions"), where("examinationId", "==", examId)));
+          qSnapAlt.forEach(qd => qList.push({ id: qd.id, ...qd.data() }));
+        } catch (err) {
+          console.error("Firestore Question Fetch Error (by examinationId):", err.code, err.message, err);
+        }
+      }
+
+      // 3. Fallback: Fetch from Question Bank (`questions` collection) by `subjectId` (e.g., Hindi: jg18iphLKrEmZrNYhciH) & class
+      if (!qList.length && ex.subjectId) {
+        try {
+          const subSnap = await getDocs(query(collection(db, "questions"), where("subjectId", "==", ex.subjectId)));
+          const targetClassId = ex.classId || userProfile.classId;
+          const targetNormClass = normalizeClass(ex.className || userProfile.className);
+
+          subSnap.forEach(qd => {
+            const qData = qd.data();
+            const qApproval = (qData.approvalStatus || qData.status || "approved").toLowerCase();
+            if (qApproval !== "approved") return;
+
+            const schoolOk = !qData.schoolId || qData.schoolId === userProfile.schoolId;
+            const classOk =
+              !qData.classId ||
+              qData.classId === targetClassId ||
+              (targetNormClass && normalizeClass(qData.className || qData.classId) === targetNormClass);
+
+            if (schoolOk && classOk) {
+              qList.push({ id: qd.id, ...qData });
+            }
+          });
+
+          if (ex.totalQuestions && qList.length > Number(ex.totalQuestions)) {
+            qList = qList.slice(0, Number(ex.totalQuestions));
+          }
+        } catch (err) {
+          console.error("Firestore Question Fetch Error (by subjectId):", err.code, err.message, err);
+        }
+      }
+
+      if (!qList.length) {
+        alert("Is exam ke liye abhi koi approved questions available nahi hain. Kripya Admin se sampark karein.");
+        return;
+      }
+
+      activeExam = ex;
+      activeQuestions = qList;
+      currentQIdx = 0;
+      visitedSet = new Set([0]);
+      isSubmitting = false;
+
+      document.getElementById('examTitleHeader').textContent = ex.title;
+      document.getElementById('examSubjectHeader').textContent = ex.subjectName || ex.subject || "";
+      document.getElementById('timeWarning').classList.add('hidden');
+
+      switchTab('sec-exam');
+      renderQuestion();
+      startExamTimer(startedAtMs, ex.durationMinutes, endMs);
+    }
+
+    function startExamTimer(startedAtMs, durationMins, examWindowEndMs) {
+      clearInterval(timerInterval);
+      const personalEndMs = Math.min(startedAtMs + durationMins * 60 * 1000, examWindowEndMs);
+
+      timerInterval = setInterval(() => {
+        const remaining = Math.floor((personalEndMs - Date.now()) / 1000);
+        if (remaining <= 0) {
+          clearInterval(timerInterval);
+          document.getElementById('timerDisplay').textContent = "00:00";
+          finalizeExamSubmission(true);
+          return;
+        }
+        const mins = Math.floor(remaining / 60);
+        const secs = remaining % 60;
+        document.getElementById('timerDisplay').textContent =
+          `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+
+        const warnBox = document.getElementById('timeWarning');
+        if (remaining === 300 || remaining === 60) {
+          warnBox.textContent = `⚠️ Warning: Only ${mins} minute(s) remaining!`;
+          warnBox.classList.remove('hidden');
+        }
+      }, 1000);
+    }
+
+    async function autoSaveProgress() {
+      if (!attemptRef || isSubmitting) return;
+      const badge = document.getElementById('autoSaveBadge');
+      badge.textContent = "⏳ Saving...";
+      try {
+        await updateDoc(attemptRef, { answers, markedReview, lastSavedAt: serverTimestamp() });
+        badge.textContent = "● Auto-Saved";
+      } catch (err) {
+        console.error("Auto-Save Error:", err);
+        badge.textContent = "⚠️ Offline Retry";
+      }
+    }
+
+    function renderQuestion() {
+      visitedSet.add(currentQIdx);
+      const q = activeQuestions[currentQIdx];
+      if (!q) return;
+
+      document.getElementById('qNumberLabel').textContent = `Question ${currentQIdx + 1} of ${activeQuestions.length}`;
+      document.getElementById('qMarksLabel').textContent = `${q.marks || 1} Mark`;
+      document.getElementById('qText').textContent = q.questionText || q.question || "";
+
+      const opts = extractQuestionOptions(q);
+      const container = document.getElementById('optionsContainer');
+      container.innerHTML = "";
+
+      opts.forEach((optText, idx) => {
+        const isSelected = answers[currentQIdx] === idx;
+        const div = document.createElement('div');
+        div.className = `option-item ${isSelected ? 'selected' : ''}`;
+        div.innerHTML = `<strong>${String.fromCharCode(65 + idx)}.</strong> <span>${optText}</span>`;
+        div.onclick = async () => {
+          answers[currentQIdx] = idx;
+          renderQuestion();
+          await autoSaveProgress();
+        };
+        container.appendChild(div);
+      });
+
+      document.getElementById('prevBtn').disabled = currentQIdx === 0;
+      renderPalette();
+    }
+
+    function renderPalette() {
+      const grid = document.getElementById('paletteGrid');
+      grid.innerHTML = "";
+      let notVis = 0, ansOnly = 0, notAns = 0, revOnly = 0, ansAndRev = 0;
+
+      activeQuestions.forEach((_, idx) => {
+        const hasAns = answers[idx] !== undefined;
+        const hasRev = !!markedReview[idx];
+        const isVis = visitedSet.has(idx);
+
+        const btn = document.createElement('button');
+        btn.textContent = idx + 1;
+        btn.className = "palette-btn";
+        if (idx === currentQIdx) btn.classList.add('current');
+
+        if (hasAns && hasRev) { btn.classList.add('p-ans-review'); ansAndRev++; }
+        else if (hasRev) { btn.classList.add('p-review'); revOnly++; }
+        else if (hasAns) { btn.classList.add('p-answered'); ansOnly++; }
+        else if (isVis) { btn.classList.add('p-not-answered'); notAns++; }
+        else { btn.classList.add('p-not-visited'); notVis++; }
+
+        btn.onclick = () => { currentQIdx = idx; renderQuestion(); };
+        grid.appendChild(btn);
+      });
+
+      document.getElementById('cntNotVis').textContent = notVis;
+      document.getElementById('cntAns').textContent = ansOnly;
+      document.getElementById('cntUnans').textContent = notAns;
+      document.getElementById('cntRev').textContent = revOnly;
+      document.getElementById('cntAnsRev').textContent = ansAndRev;
+    }
+
+    document.getElementById('prevBtn').onclick = async () => {
+      if (currentQIdx > 0) {
+        await autoSaveProgress();
+        currentQIdx--;
+        renderQuestion();
+      }
+    };
+    document.getElementById('saveNextBtn').onclick = async () => {
+      await autoSaveProgress();
+      if (currentQIdx < activeQuestions.length - 1) {
+        currentQIdx++;
+        renderQuestion();
+      }
+    };
+    document.getElementById('reviewBtn').onclick = async () => {
+      markedReview[currentQIdx] = !markedReview[currentQIdx];
+      renderPalette();
+      await autoSaveProgress();
+    };
+    document.getElementById('clearBtn').onclick = async () => {
+      delete answers[currentQIdx];
+      renderQuestion();
+      await autoSaveProgress();
+    };
+
+    // Part 3.14: Open Confirmation Modal
+    document.getElementById('openSubmitModalBtn').onclick = () => {
+      const total = activeQuestions.length;
+      const ans = Object.keys(answers).length;
+      const rev = Object.values(markedReview).filter(Boolean).length;
+      document.getElementById('mTotalQ').textContent = total;
+      document.getElementById('mAnsQ').textContent = ans;
+      document.getElementById('mUnansQ').textContent = total - ans;
+      document.getElementById('mRevQ').textContent = rev;
+      document.getElementById('submitConfirmModal').classList.remove('hidden');
+    };
+
+    document.getElementById('finalConfirmSubmitBtn').onclick = () => {
+      document.getElementById('submitConfirmModal').classList.add('hidden');
+      finalizeExamSubmission(false);
+    };
+
+    async function finalizeExamSubmission(auto = false) {
+      if (isSubmitting || !activeExam) return;
+      isSubmitting = true;
+      clearInterval(timerInterval);
+
+      let correct = 0, incorrect = 0, unanswered = 0, obtainedMarks = 0;
+      const negPerWrong = Number(activeExam.negativeMarking || 0);
+
+      activeQuestions.forEach((q, idx) => {
+        const given = answers[idx];
+        const m = Number(q.marks || 1);
+        const opts = extractQuestionOptions(q);
+        const correctIdx = resolveCorrectOptionIndex(q, opts);
+
+        if (given === undefined) {
+          unanswered++;
+        } else if (correctIdx >= 0) {
+          if (given === correctIdx) {
+            correct++;
+            obtainedMarks += m;
+          } else {
+            incorrect++;
+            obtainedMarks -= negPerWrong;
+          }
+        }
+      });
+
+      obtainedMarks = Math.max(0, Number(obtainedMarks.toFixed(2)));
+      const totalMarks = Number(activeExam.totalMarks || activeQuestions.length);
+      const percentage = totalMarks > 0 ? Number(((obtainedMarks / totalMarks) * 100).toFixed(2)) : 0;
+      const attemptedCount = correct + incorrect;
+      const accuracy = attemptedCount > 0 ? Number(((correct / attemptedCount) * 100).toFixed(2)) : 0;
+      const passMarks = Number(activeExam.passMarks || (totalMarks * 0.33));
+      const passed = obtainedMarks >= passMarks;
+
+      const endMs = activeExam.endTime?.toMillis ? activeExam.endTime.toMillis() : new Date(activeExam.endTime).getTime();
+      const resultReleaseMs = endMs + (30 * 60 * 1000);
+      const completedExamId = activeExam.id;
+
+      try {
+        await updateDoc(attemptRef, {
+          status: "submitted",
+          autoSubmitted: auto,
+          submittedAt: serverTimestamp(),
+          answers,
+          correctCount: correct,
+          incorrectCount: incorrect,
+          unansweredCount: unanswered,
+          obtainedMarks,
+          totalMarks,
+          percentage,
+          accuracy,
+          passed,
+          resultReleaseMs
+        });
+
+        await setDoc(doc(db, "results", `${currentUser.uid}_${completedExamId}`), {
+          studentId: currentUser.uid,
+          studentName: userProfile.fullName,
+          photoURL: userProfile.photoURL || "",
+          schoolId: userProfile.schoolId,
+          schoolName: userProfile.schoolName,
+          classId: activeExam.classId || userProfile.classId,
+          className: userProfile.className,
+          examId: completedExamId,
+          examTitle: activeExam.title,
+          subjectName: activeExam.subjectName || activeExam.subject || "",
+          correctCount: correct,
+          incorrectCount: incorrect,
+          unansweredCount: unanswered,
+          obtainedMarks,
+          totalMarks,
+          percentage,
+          accuracy,
+          passed,
+          published: false,
+          allowAnswerReview: Boolean(activeExam.allowAnswerReview),
+          resultReleaseMs
+        });
+
+        await addDoc(collection(db, "notifications"), {
+          userId: currentUser.uid,
+          title: "Exam Submitted",
+          message: `Aapne "${activeExam.title}" safaltapoorvak submit kar diya hai.`,
+          read: false,
+          createdAt: serverTimestamp()
+        });
+
+        activeExam = null;
+        await Promise.all([loadDashboardData(), loadNotifications()]);
+        openScorecard(completedExamId);
+      } catch (err) {
+        alert("Submission Error: " + err.message);
+        isSubmitting = false;
+      }
+    }
+
+    // Part 4.16-19: Scorecard & Question-Wise Answer Review
+    window.openScorecard = async function(examId) {
+      switchTab('sec-results');
+      const box = document.getElementById('singleResultBox');
+      box.classList.remove('hidden');
+
+      const res = resultsCache[examId];
+      const att = attemptsCache[examId];
+      const ex = examsCache[examId];
+      const data = res || att;
+
+      if (!data) {
+        box.innerHTML = `<div class="card"><h3>No Submission Found</h3></div>`;
+        return;
+      }
+
+      if (data.published !== true) {
+        box.innerHTML = `
+          <div class="card" style="text-align:center; padding:28px;">
+            <span class="badge badge-approved" style="margin-bottom:12px;">✅ Submission Confirmed</span>
+            <h2>Exam Submitted Successfully</h2>
+            <p style="color:var(--muted); margin-top:8px; font-size:14px;">
+              Admin dwara Result Publish karne ke baad aapka scorecard yahan dikhai dega.
+            </p>
+          </div>
+        `;
+        return;
+      }
+
+      let reviewHTML = "";
+      const reviewQs = (ex && Array.isArray(ex.questions) && ex.questions.length) ? ex.questions : activeQuestions;
+      if (data.allowAnswerReview && reviewQs && reviewQs.length && att && att.answers) {
+        reviewHTML = `<h4 style="margin:22px 0 12px;">Question-Wise Answer Review</h4><div style="display:grid; gap:10px;">` +
+          reviewQs.map((q, idx) => {
+            const opts = extractQuestionOptions(q);
+            const sel = att.answers[idx];
+            const cor = resolveCorrectOptionIndex(q, opts);
+            const isRight = sel === cor;
+            return `
+              <div style="padding:14px; border-radius:12px; border:1px solid var(--border); background:${isRight ? '#ecfdf5' : '#fef2f2'};">
+                <strong>Q${idx + 1}. ${q.questionText || q.question}</strong>
+                <div style="font-size:13px; margin-top:6px;">
+                  Your Answer: <strong>${sel !== undefined ? opts[sel] : 'Not Answered'}</strong> •
+                  Correct Answer: <strong style="color:#047857;">${cor >= 0 ? opts[cor] : '-'}</strong>
+                </div>
+              </div>
+            `;
+          }).join('') + `</div>`;
+      }
+
+      box.innerHTML = `
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:14px; margin-bottom:18px;">
+            <div>
+              <h2>${data.examTitle}</h2>
+              <p style="color:var(--muted); font-size:13.5px;">Student: <strong>${data.studentName}</strong> • Subject: ${data.subjectName}</p>
+            </div>
+            <span class="badge badge-${data.passed ? 'approved' : 'fail'}" style="font-size:14px;">${data.passed ? 'PASS' : 'FAIL'}</span>
+          </div>
+
+          <div class="stats-grid" style="grid-template-columns:repeat(auto-fit, minmax(130px, 1fr));">
+            <div class="card" style="background:#f8fafc; padding:14px;"><small>Obtained</small><h3>${data.obtainedMarks}/${data.totalMarks}</h3></div>
+            <div class="card" style="background:#f8fafc; padding:14px;"><small>Percentage</small><h3>${data.percentage}%</h3></div>
+            <div class="card" style="background:#f8fafc; padding:14px;"><small>Accuracy</small><h3>${data.accuracy || data.percentage}%</h3></div>
+            <div class="card" style="background:#f8fafc; padding:14px;"><small>Correct / Wrong</small><h3>${data.correctCount} / ${data.incorrectCount}</h3></div>
+          </div>
+          ${reviewHTML}
+        </div>
+      `;
+    };
+
+    // Part 5.20-22: 30-Minute Delayed Leaderboard
+    async function loadLeaderboard() {
+      const snap = await getDocs(collection(db, "results"));
+      const now = Date.now();
+      publishedLeaderboard = [];
+
+      const schools = new Set(), classes = new Set(), exams = new Map();
+      snap.forEach(d => {
+        const r = d.data();
+        const isDelayedReleased = r.resultReleaseMs && now >= r.resultReleaseMs;
+        if (r.published === true && isDelayedReleased) {
+          publishedLeaderboard.push(r);
+          if (r.schoolName) schools.add(r.schoolName);
+          if (r.className) classes.add(r.className);
+          if (r.examId) exams.set(r.examId, r.examTitle);
+        }
+      });
+
+      const fillSel = (id, items, def) => {
+        const el = document.getElementById(id);
+        el.innerHTML = `<option value="">${def}</option>`;
+        items.forEach(v => { el.innerHTML += `<option value="${v}">${v}</option>`; });
+      };
+      fillSel('fSchool', schools, 'All Schools');
+      fillSel('fClass', classes, 'All Classes');
+
+      const fExam = document.getElementById('fExam');
+      fExam.innerHTML = '<option value="">Overall Ranking</option>';
+      exams.forEach((t, id) => { fExam.innerHTML += `<option value="${id}">${t}</option>`; });
+
+      ['fSchool', 'fClass', 'fExam'].forEach(id => { document.getElementById(id).onchange = renderLeaderboardTable; });
+      renderLeaderboardTable();
+    }
+
+    function renderLeaderboardTable() {
+      const sVal = document.getElementById('fSchool').value;
+      const cVal = document.getElementById('fClass').value;
+      const exVal = document.getElementById('fExam').value;
+
+      const filtered = publishedLeaderboard
+        .filter(r => (!sVal || r.schoolName === sVal) && (!cVal || r.className === cVal) && (!exVal || r.examId === exVal))
+        .sort((a, b) => (a.rank && b.rank ? a.rank - b.rank : (b.obtainedMarks - a.obtainedMarks) || (b.percentage - a.percentage)));
+
+      const medals = ["🥇 Rank #1", "🥈 Rank #2", "🥉 Rank #3"];
+      document.getElementById('topThreeGrid').innerHTML = filtered.slice(0, 3).map((r, i) => `
+        <div class="card" style="border-top: 4px solid ${i===0 ? '#f59e0b' : i===1 ? '#94a3b8' : '#b45309'};">
+          <span class="badge badge-upcoming" style="margin-bottom:8px;">${medals[i]}</span>
+          <h3>${r.studentName}</h3>
+          <p style="font-size:13px; color:var(--muted);">${r.schoolName} • ${r.className}</p>
+          <p style="margin-top:8px; font-weight:800; color:var(--indigo);">${r.obtainedMarks}/${r.totalMarks} (${r.percentage}%)</p>
+        </div>
+      `).join('');
+
+      const tbody = document.getElementById('leaderTableBody');
+      tbody.innerHTML = filtered.length
+        ? filtered.map((r, idx) => `
+            <tr>
+              <td><strong>#${r.rank || idx + 1}</strong></td>
+              <td>${r.studentName}</td>
+              <td>${r.schoolName}</td>
+              <td>${r.className}</td>
+              <td>${r.examTitle}</td>
+              <td><strong>${r.obtainedMarks}/${r.totalMarks}</strong></td>
+              <td>${r.percentage}%</td>
+            </tr>
+          `).join('')
+        : "<tr><td colspan='7'>No leaderboard entries available yet (publishes 30 mins after exam ends).</td></tr>";
+    }
+
+    // Part 7: Notifications
+    async function loadNotifications() {
+      const snap = await getDocs(query(collection(db, "notifications"), where("userId", "in", [currentUser.uid, "all"])));
+      let unread = 0, html = "";
+      const docs = [];
+      snap.forEach(d => docs.push({ id: d.id, ...d.data() }));
+
+      docs.forEach(n => {
+        if (!n.read && n.userId === currentUser.uid) unread++;
+        const dt = n.createdAt?.toMillis ? new Date(n.createdAt.toMillis()).toLocaleString() : "";
+        html += `
+          <div class="card" style="display:flex; justify-content:space-between; align-items:start; gap:12px; border-left:4px solid ${n.read ? '#cbd5e1' : 'var(--indigo)'};">
+            <div>
+              <strong>${n.title}</strong>
+              <p style="font-size:13.5px; color:var(--muted); margin-top:4px;">${n.message}</p>
+              <small style="color:var(--muted); font-size:11px;">${dt}</small>
+            </div>
+            ${n.userId === currentUser.uid ? `<button onclick="deleteNotif('${n.id}')" class="btn btn-outline" style="padding:4px 10px; font-size:12px;">✕</button>` : ''}
+          </div>
+        `;
+      });
+
+      document.getElementById('notificationsList').innerHTML = html || "<div class='card'><p style='color:var(--muted);'>No notifications yet.</p></div>";
+      ['topNotifBadge', 'sideNotifBadge'].forEach(id => {
+        const b = document.getElementById(id);
+        b.textContent = unread;
+        b.classList.toggle('hidden', unread === 0);
+      });
+    }
+
+    window.deleteNotif = async function(id) {
+      await deleteDoc(doc(db, "notifications", id));
+      await loadNotifications();
+    };
+
+    document.getElementById('markAllReadBtn').addEventListener('click', async () => {
+      const snap = await getDocs(query(collection(db, "notifications"), where("userId", "==", currentUser.uid), where("read", "==", false)));
+      const tasks = [];
+      snap.forEach(d => tasks.push(updateDoc(doc(db, "notifications", d.id), { read: true })));
+      await Promise.all(tasks);
+      await loadNotifications();
+    });
+
+    // Part 10: Admin Announcements
+    async function loadAnnouncements() {
+      try {
+        const snap = await getDocs(collection(db, "announcements"));
+        let html = "";
+        snap.forEach(d => {
+          const a = d.data();
+          const schoolMatch = !a.targetSchool || a.targetSchool === "all" || a.targetSchool === userProfile.schoolId;
+          const classMatch = !a.targetClass || a.targetClass === "all" || normalizeClass(a.targetClass) === normalizeClass(userProfile.className);
+          if (schoolMatch && classMatch) {
+            html += `
+              <div style="padding:12px; background:#f8fafc; border-radius:10px; border-left:3px solid var(--violet);">
+                <div style="display:flex; justify-content:space-between;">
+                  <strong>${a.title}</strong>
+                  <span class="badge badge-upcoming">${a.priority || 'Notice'}</span>
+                </div>
+                <p style="font-size:13px; color:var(--muted); margin-top:4px;">${a.description}</p>
+              </div>
+            `;
+          }
+        });
+        document.getElementById('dashAnnouncementsList').innerHTML = html || "<p style='color:var(--muted); font-size:13px;'>No active announcements.</p>";
+      } catch (_) {
+        document.getElementById('dashAnnouncementsList').innerHTML = "<p style='color:var(--muted); font-size:13px;'>No announcements.</p>";
+      }
+    }
+
+    // Part 8: Help Center, FAQs, AI Help Bot & Support Tickets
+    function renderFAQs(searchTerm) {
+      const term = searchTerm.toLowerCase();
+      const filtered = DEFAULT_FAQS.filter(f => f.q.toLowerCase().includes(term) || f.a.toLowerCase().includes(term));
+      document.getElementById('faqListContainer').innerHTML = filtered.map(f => `
+        <div style="padding:14px; background:#f8fafc; border-radius:12px; border:1px solid var(--border);">
+          <strong style="color:var(--indigo);">Q: ${f.q}</strong>
+          <p style="font-size:13.5px; color:#334155; margin-top:4px;">${f.a}</p>
+        </div>
+      `).join('') || "<p style='color:var(--muted);'>No matching FAQs found.</p>";
+    }
+
+    document.getElementById('faqSearchInput').addEventListener('input', (e) => renderFAQs(e.target.value));
+
+    function askAIBot(question) {
+      const box = document.getElementById('aiChatBox');
+      box.innerHTML += `<div class="msg-bubble msg-user">${question}</div>`;
+
+      const q = question.toLowerCase();
+      let reply = "Main aapki madad ke liye taiyar hoon! Agar aapki samasya specific hai toh bagal mein 'Raise a Support Ticket' form se seedha Admin ko message bhej sakte hain.";
+
+      if (q.includes("approve") || q.includes("status") || q.includes("pending")) {
+        reply = `Aapke account ka current status <strong>${userProfile.status.toUpperCase()}</strong> hai (${userProfile.schoolName} - ${userProfile.className}). Jab School Admin approve karenge, tabhi exams active honge.`;
+      } else if (q.includes("exam") || q.includes("kab") || q.includes("live")) {
+        const liveCount = document.getElementById('statAvailable').textContent;
+        const upCount = document.getElementById('statUpcoming').textContent;
+        reply = `Abhi aapke class (${userProfile.className}) ke liye <strong>${liveCount} Live Exam(s)</strong> aur <strong>${upCount} Upcoming Exam(s)</strong> scheduled hain. 'Available Exams' tab check karein.`;
+      } else if (q.includes("result") || q.includes("marks") || q.includes("leaderboard")) {
+        reply = "Admin dwara Result Publish karne ke baad aap 'My Results' mein scorecard dekh sakte hain. Leaderboard exam khatam hone ke 30 minute baad update hota hai.";
+      } else if (q.includes("ticket") || q.includes("help") || q.includes("problem")) {
+        reply = "Ticket raise karne ke liye dayi taraf (right side) 'Raise a Support Ticket' form mein Category, Subject aur Description bharkar submit karein.";
+      }
+
+      setTimeout(() => {
+        box.innerHTML += `<div class="msg-bubble msg-bot">${reply}</div>`;
+        box.scrollTop = box.scrollHeight;
+      }, 300);
+    }
+
+    document.getElementById('aiChatForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const inp = document.getElementById('aiPromptInput');
+      if (!inp.value.trim()) return;
+      askAIBot(inp.value.trim());
+      inp.value = "";
+    });
+
+    document.querySelectorAll('.ai-quick-q').forEach(btn => {
+      btn.addEventListener('click', () => askAIBot(btn.textContent));
+    });
+
+    // Raise Support Ticket
+    document.getElementById('raiseTicketForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('submitTicketBtn');
+      const alertBox = document.getElementById('ticketSuccessAlert');
+      btn.disabled = true;
+      btn.textContent = "Creating Ticket...";
+
+      const ticketCode = "TKT-" + Math.floor(100000 + Math.random() * 900000);
+      const subject = document.getElementById('ticketSubject').value.trim();
+      const category = document.getElementById('ticketCategory').value;
+      const description = document.getElementById('ticketDesc').value.trim();
+
+      try {
+        const docRef = await addDoc(collection(db, "supportTickets"), {
+          ticketCode,
+          studentId: currentUser.uid,
+          studentName: userProfile.fullName,
+          schoolId: userProfile.schoolId,
+          className: userProfile.className,
+          category,
+          subject,
+          description,
+          status: "Open",
+          priority: "Normal",
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
+        });
+
+        await addDoc(collection(db, "ticketMessages"), {
+          ticketId: docRef.id,
+          senderRole: "student",
+          senderId: currentUser.uid,
+          senderName: userProfile.fullName,
+          message: description,
+          createdAt: serverTimestamp()
+        });
+
+        alertBox.textContent = `✅ Ticket Created! Unique Ticket ID: ${ticketCode}`;
+        alertBox.classList.remove('hidden');
+        document.getElementById('raiseTicketForm').reset();
+      } catch (err) {
+        alert("Ticket Error: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Submit Support Ticket";
+      }
+    });
+
+    async function loadMyTickets() {
+      const snap = await getDocs(query(collection(db, "supportTickets"), where("studentId", "==", currentUser.uid)));
+      let html = "";
+      snap.forEach(d => {
+        const t = d.data();
+        const dt = t.updatedAt?.toMillis ? new Date(t.updatedAt.toMillis()).toLocaleDateString() : "Recent";
+        const stClass = (t.status || "open").toLowerCase().replace(/\s+/g, "_");
+        html += `
+          <tr>
+            <td><strong>${t.ticketCode || d.id.slice(0, 6)}</strong></td>
+            <td>${t.subject}</td>
+            <td>${t.category}</td>
+            <td>${dt}</td>
+            <td><span class="badge badge-${stClass}">${t.status || 'Open'}</span></td>
+            <td><button onclick="openTicketChat('${d.id}', '${t.subject.replace(/'/g, "")}', '${t.ticketCode || d.id}')" class="btn btn-outline" style="padding:6px 12px;">Open Chat</button></td>
+          </tr>
+        `;
+      });
+      document.getElementById('ticketsTableBody').innerHTML = html || "<tr><td colspan='6'>No support tickets raised yet.</td></tr>";
+    }
+
+    window.openTicketChat = async function(ticketDocId, subject, code) {
+      activeTicketId = ticketDocId;
+      document.getElementById('ticketConversationBox').classList.remove('hidden');
+      document.getElementById('convTicketTitle').textContent = subject;
+      document.getElementById('convTicketMeta').textContent = `Ticket ID: ${code}`;
+
+      const msgSnap = await getDocs(query(collection(db, "ticketMessages"), where("ticketId", "==", ticketDocId)));
+      const msgs = [];
+      msgSnap.forEach(m => msgs.push(m.data()));
+      msgs.sort((a, b) => (a.createdAt?.toMillis?.() || 0) - (b.createdAt?.toMillis?.() || 0));
+
+      const list = document.getElementById('ticketMessagesList');
+      list.innerHTML = msgs.map(m => `
+        <div class="msg-bubble ${m.senderRole === 'student' ? 'msg-user' : 'msg-bot'}">
+          <div style="font-size:11px; opacity:0.8; margin-bottom:2px;">${m.senderRole === 'student' ? 'You' : 'Admin Support'}</div>
+          <div>${m.message}</div>
+        </div>
+      `).join('');
+      list.scrollTop = list.scrollHeight;
+    };
+
+    document.getElementById('replyTicketForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!activeTicketId) return;
+      const inp = document.getElementById('ticketReplyInput');
+      const text = inp.value.trim();
+      if (!text) return;
+
+      await addDoc(collection(db, "ticketMessages"), {
+        ticketId: activeTicketId,
+        senderRole: "student",
+        senderId: currentUser.uid,
+        senderName: userProfile.fullName,
+        message: text,
+        createdAt: serverTimestamp()
+      });
+      await updateDoc(doc(db, "supportTickets", activeTicketId), { updatedAt: serverTimestamp() });
+      inp.value = "";
+      openTicketChat(activeTicketId, document.getElementById('convTicketTitle').textContent, document.getElementById('convTicketMeta').textContent);
+    });
+  </script>
+</body>
+</html>
+
